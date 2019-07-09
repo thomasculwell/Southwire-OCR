@@ -1,2 +1,2 @@
-# Southwire-OCR
+# southwireOCR
 Southwire OCR Project Repository
