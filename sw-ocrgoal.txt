@@ -1,0 +1,24 @@
+Southwire-OCR Outline and Planning
+
+I want to automate the process of inputting Southwire's goods receipts into ApplicationXtender. I plan to do this by implementing an OCR software and supporting python scripts that can recognize and grab the essential information on each goods receipt and use that information to populate the corresponding input values in ApplicationXtender. This should make the process of scanning and uploading goods receipts into ApplicationXtender much easier and much faster.
+
+Process:
+1. Scan Document --> TIF (Scanner)
+2. TIF --> TXT (Tesseract)
+3. TXT --> Specific text (Python Script)
+4. Specific text --> Populate AxWeb (Python Script?)
+
+
+
+2.
+"tesseract file.tif eng"
+
+
+3.
+If you can't tell what encoding it is and solution above does not work (it's not utf8) and you found yourself merely guessing - there are online tools that you could use to identify what encoding that is. They aren't perfect but usually work just fine. After you figured out encoding you should be able to use solution above.
+
+A quite popular text editor Sublime Text has a command to display encoding if it has been set...
+
+Go to View -> Show Console (or Ctrl+`)
+
+Type into field at the bottom: view.encoding() and hope for the best.
