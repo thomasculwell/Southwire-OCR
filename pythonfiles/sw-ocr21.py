@@ -265,29 +265,29 @@ def full_ocr(imgfile):
 
 
     # This checks to see if the file is a GR.
-    if fulllist == []:
-        isgr2 = False
-    try:
-        for i in range(len(fulllist)):
-            if (fulllist[i]=='No.' or fulllist[i]=='NO.' or fulllist[i]=='N0.' \
-            or fulllist[i]=='no.' or fulllist[i]=='nO.' or fulllist[i]=='n0.') \
-            and (fulllist[i+2] == 'Page' or fulllist[i+2] == 'page') \
-            and re.match('[5][0][0]\d{7}', fulllist[i+1]) is not None:
-                isgr2 = True
-                break
-            elif (fulllist[i]=='No.' or fulllist[i]=='NO.' or fulllist[i]=='N0.' \
-            or fulllist[i]=='no.' or fulllist[i]=='nO.' or fulllist[i]=='n0.') \
-            and re.match('[5][0][0]\d{7}', fulllist[i+1]) is not None:
-                isgr2 = True
-                break
-            elif re.match('[5][0][0]\d{7}', fulllist[i]) is not None \
-            and fulllist[i+1]=='Page' or fulllist[i+1]=='page':
-                isgr2 = True
-                break
-            else:
-                isgr2 = False
-    except:
-        isgr2 = False
+    # if fulllist == []:
+    #     isgr2 = False
+    # try:
+    #     for i in range(len(fulllist)):
+    #         if (fulllist[i]=='No.' or fulllist[i]=='NO.' or fulllist[i]=='N0.' \
+    #         or fulllist[i]=='no.' or fulllist[i]=='nO.' or fulllist[i]=='n0.') \
+    #         and (fulllist[i+2] == 'Page' or fulllist[i+2] == 'page') \
+    #         and re.match('[5][0][0]\d{7}', fulllist[i+1]) is not None:
+    #             isgr2 = True
+    #             break
+    #         elif (fulllist[i]=='No.' or fulllist[i]=='NO.' or fulllist[i]=='N0.' \
+    #         or fulllist[i]=='no.' or fulllist[i]=='nO.' or fulllist[i]=='n0.') \
+    #         and re.match('[5][0][0]\d{7}', fulllist[i+1]) is not None:
+    #             isgr2 = True
+    #             break
+    #         elif re.match('[5][0][0]\d{7}', fulllist[i]) is not None \
+    #         and fulllist[i+1]=='Page' or fulllist[i+1]=='page':
+    #             isgr2 = True
+    #             break
+    #         else:
+    #             isgr2 = False
+    # except:
+    #     isgr2 = False
 
 
     # This finds the Receiving Report #
@@ -447,18 +447,6 @@ def gr_cropocr(img):
 
 
 
-#         for j in ptfilenames:
-#             if j.startswith(i.split('.')[0]):
-#                 os.rename(j, str(counter) + '.' + \
-#                 str(counter5) + '.jpg')
-#                 counter5 += 1
-#         counter += 1
-# print(grfilenames)
-# print(ptfilenames)
-
-
-
-
 # EXECUTION TIME
 # The following three chunks of code execute the functions
 # and make this train go round and round.
@@ -469,39 +457,38 @@ filenames = glob.glob('*.jpg')
 allfilenames = []
 grfilenames = []
 ptfilenames = []
-counter = 1
+counter1 = 1
 counter2 = 1
+counter3 = 1
+counter4 = 1
+
+# The following creates a .txt file and writes the first line to it.
 with open('results.txt', 'w') as txtfile:
     txtfile.write('Receiving Report #, Purchase Order #, Name, Date@Image File' + '\n')
 
 
-# The following iterates through each filename and gets isgr and isgr2
-# from the functions full_ocr and gr_cropocr. If it is a GR, it is
-# renamed accordingly (whole number.jpg) and then added to the list
-# allfilenames. If it is not a GR, it is renamed accordingly
+# The following iterates through each filename and gets isgr
+# from the function  gr_cropocr. If it is a goods receipt (if isgr = True),
+# it is renamed accordingly (whole number.jpg) and then added to the list
+# allfilenames. If it is not a goods receipt, it is renamed accordingly
 # (GRwholenumber.decimalnumber.jpg) and then added to the list
 # allfilenames.
 for file in filenames:
     gr_cropocr(file)
-    
     if isgr == True: #or isgr2 == True:
-        os.rename(file, str(counter) + '.jpg')
-        allfilenames.append(str(counter) + '.jpg')
-        counter += 1
+        os.rename(file, str(counter1) + '.jpg')
+        allfilenames.append(str(counter1) + '.jpg')
+        counter1 += 1
         counter2 = 1
     else:
-        os.rename(file, str((counter - 1)) + '.' + str(counter2) \
+        os.rename(file, str((counter1 - 1)) + '.' + str(counter2) \
         +  '.jpg')
-        allfilenames.append(str((counter - 1)) + '.' + str(counter2) \
+        allfilenames.append(str((counter1 - 1)) + '.' + str(counter2) \
         + '.jpg')
         counter2 += 1
 
-
-# The following iterates through the list allfilenames and removes
-# duplicate GRs. After this is complete, the remaning GRs are
-# added to the list grfilenames and the corresponding PTs are
-# added to the list ptfilenames. After that, it then creates a 
-# dictionary called dicta that holds the GRs as keys and PTs as values.
+# The following loops iterate through the list allfilenames and removes
+# duplicate GRs.
 k = 1
 while k < len(allfilenames):
     if len(allfilenames[k].split('.')) == 2 and \
@@ -511,12 +498,17 @@ while k < len(allfilenames):
         k -= 1
     k += 1
 
+# The following loop iterates through the files in allfilenames and
+# appends the good receipt files to grfilenames and the picking ticket
+# files to ptfilenames.
 for file in allfilenames:
     if len(file.split('.')) == 2:
         grfilenames.append(file)
     elif len(file.split('.')) == 3:
         ptfilenames.append(file)
 
+# The following creates a dictionary called dicta that holds the goods
+# receipts as keys and picking tickets as values.
 dicta = defaultdict(list)
 for grfile in grfilenames:
     for ptfile in ptfilenames:
@@ -555,6 +547,10 @@ for file in dicta:
     pscrop_ocr(file)
 
 
+    # The following compares the receiving report found from
+    # a cropped OCR scan and the receiving report found from
+    # a full page OCR scan and sets the variable recrep equal
+    # to their match or a regex match of one of them.
     if rr == rr2 and rr == 'No Receiving Report # Found':
         recrep = 'Check'
     elif rr == rr2:
@@ -575,7 +571,10 @@ for file in dicta:
     else:
         recrep = str(rr) + ', ' + str(rr2) + ': Check'
 
-
+    # The following compares the purchase order found from
+    # a cropped OCR scan and the purchase order found from
+    # a full page OCR scan and sets the variable purord equal
+    # to their match or a regex match of one of them.
     if po == po2 and po == 'No Purchase Order # Found':
         purord = 'Check'
     elif po == po2:
@@ -596,7 +595,10 @@ for file in dicta:
     else:
         purord = str(po) + ', ' + str(po2) + ': Check'
 
-
+    # The following compares the date found from
+    # a cropped OCR scan and the date found from
+    # a full page OCR scan and sets the variable date equal
+    # to their match or a regex match of one of them.
     if dt == dt2 and dt == 'No Date Found':
         date = 'Check'
     elif dt == dt2:
@@ -617,7 +619,10 @@ for file in dicta:
     else:
         date = str(dt) + ', ' + str(dt2) + ': Check'
 
-
+    # The following compares the name found from
+    # a cropped OCR scan and the name found from
+    # a full page OCR scan and sets the variable person equal
+    # to their match or a regex match of one of them.
     if ps == ps2 and ps == 'No Person Found':
         person = 'No Person Found'
     elif ps == ps2:
@@ -638,9 +643,15 @@ for file in dicta:
     else:
         person = str(ps) + ', ' + str(ps2) + ': Check'
 
-
+    # The following is a command line call that converts several
+    # input image files into one multi-page .tif file.
     multitif = 'C:\\"Program Files"\\IrfanView\\i_view64.exe /multitif=(C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\' + file.split('.')[0] + '.tif,'
 
+    # The following determines whether to use the multitif command
+    # line function or the convert command line function on the
+    # picking tickets. This is determined by the number of picking
+    # tickets with each goods receipt. If there is more than one,
+    # multitif is used. If there is only one, convert is used.
     if len(dicta[file]) > 1:
         for ptfile in dicta[file]:
             multitif = multitif + 'C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\' + ptfile + ','
@@ -652,13 +663,20 @@ for file in dicta:
             convert = 'C:\\"Program Files"\\IrfanView\\i_view64.exe C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\' + ptfile + ' /convert=C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\' + file.split('.')[0] + '.tif'
         os.system(convert)
 
+    # The following deletes the old ptfiles from dicta.
     for ptfile in dicta[file]:
         os.remove(ptfile)
 
+    # The following creates a variable that describes the new
+    # .tif file that has been created from the process above.
     newfilename = file.split('.')[0] + '.tif'
 
+    # The following creates a variable that stores a single line
+    # of text that will be appended to the .txt file.
     txtrow = recrep + ', ' + purord + ', ' + person + ', ' + date + \
     '@' + newfilename + '\n'
     
+    # The following opens the .txt file and appends the line
+    # of text that is stored in the variable "txtrow".
     with open('results.txt', 'a') as txtfile:
         txtfile.write(txtrow)
