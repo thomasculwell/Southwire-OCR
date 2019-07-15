@@ -1,8 +1,7 @@
-# sw-ocr16.py
+# sw-ocr20.py
 
-# This should finally fix the multiple page GR issue.
-# This should aim to include .jpg image file in the csv somehow.
-
+# Merge multiple matching ptfiles into one
+# tif file and convert jpg files to tif.
 
 import os
 import re
@@ -18,12 +17,11 @@ import glob
 # down to a smaller section around the Receiving Report #, pulls the text
 # from that image, stores the text in a list, searches for the RR #,
 # and stores the RR # in a variable.
-
 def rrcrop_ocr(img):
     original = Image.open(img)
 
     dpi = original.info['dpi']
-    # print(dpi)
+
     if dpi == (600,600):
         l,u,r,d = 3000,0,5100,500
     elif dpi == (400,400):
@@ -34,18 +32,18 @@ def rrcrop_ocr(img):
         l,u,r,d = 3000,0,5000,500
 
     rr_cropped_img = original.crop((l,u,r,d))
-    rr_cropped_img.save('test.jpg')
+    rr_cropped_img.save('test1.jpg')
     # rr_cropped_img.show()
 
-    rrtext = pytesseract.image_to_string(Image.open('test.jpg'))
+    rrtext = pytesseract.image_to_string(Image.open('test1.jpg'))
     rrlist = rrtext.split()
+    # print('RR list:')
     # print(rrlist)
 
     global rr
 
     if rrlist == []:
         rr = 'No Receiving Report # Found'
-
     try:
         for i in range(len(rrlist)):
             if (rrlist[i]=='No.' or rrlist[i]=='NO.' or rrlist[i]=='N0.' \
@@ -65,12 +63,7 @@ def rrcrop_ocr(img):
     except:
         rr = 'No Receiving Report # Found'
 
-    os.remove('test.jpg')
-
-
-
-
-
+    os.remove('test1.jpg')
 
 
 
@@ -80,12 +73,11 @@ def rrcrop_ocr(img):
 # down to a smaller section around the Purchase Order #, pulls the text
 # from that image, stores the text in a list, searches for the PO #,
 # and stores the PO # in a variable.
-
 def pocrop_ocr(img):
     original = Image.open(img)
 
     dpi = original.info['dpi']
-    # print(dpi)
+
     if dpi == (600,600):
         l,u,r,d = 0,800,3000,1400
     elif dpi == (400,400):
@@ -97,11 +89,9 @@ def pocrop_ocr(img):
 
     po_cropped_img = original.crop((l,u,r,d))
     po_cropped_img.save('test2.jpg')
-    # po_cropped_img.show()
 
     potext = pytesseract.image_to_string(Image.open('test2.jpg'))
     polist = potext.split()
-    # print(polist)
 
     global po
 
@@ -139,21 +129,15 @@ def pocrop_ocr(img):
 
 
 
-
-
-
-
-
 # The following function takes a jpg image as input, crops that image
 # down to a smaller section around the date, pulls the text
 # from that image, stores the text in a list, searches for the date,
 # and stores the date in a variable.
-
 def dtcrop_ocr(img):
     original = Image.open(img)
 
     dpi = original.info['dpi']
-    # print(dpi)
+
     if dpi == (600,600):
         l,u,r,d = 0,400,3000,800
     elif dpi == (400,400):
@@ -164,12 +148,10 @@ def dtcrop_ocr(img):
         l,u,r,d = 0,400,3000,800
 
     dt_cropped_img = original.crop((l,u,r,d))
-    dt_cropped_img.save('test2.jpg')
-    # dt_cropped_img.show()
+    dt_cropped_img.save('test3.jpg')
 
-    dttext = pytesseract.image_to_string(Image.open('test2.jpg'))
+    dttext = pytesseract.image_to_string(Image.open('test3.jpg'))
     dtlist = dttext.split()
-    # print(dtlist)
 
     global dt
 
@@ -195,12 +177,7 @@ def dtcrop_ocr(img):
     except:
         dt = 'No Date Found'
 
-    os.remove('test2.jpg')
-
-
-
-
-
+    os.remove('test3.jpg')
 
 
 
@@ -209,12 +186,11 @@ def dtcrop_ocr(img):
 # down to a smaller section around the person, pulls the text
 # from that image, stores the text in a list, searches for the person,
 # and stores the person in a variable.
-
 def pscrop_ocr(img):
     original = Image.open(img)
 
     dpi = original.info['dpi']
-    # print(dpi)
+
     if dpi == (600,600):
         l,u,r,d = 0,4000,5000,6700
     elif dpi == (400,400):
@@ -225,11 +201,12 @@ def pscrop_ocr(img):
         l,u,r,d = 0,4000,5000,6700
 
     ps_cropped_img = original.crop((l,u,r,d))
-    ps_cropped_img.save('test2.jpg')
+    ps_cropped_img.save('test4.jpg')
     # ps_cropped_img.show()
 
-    pstext = pytesseract.image_to_string(Image.open('test2.jpg'))
+    pstext = pytesseract.image_to_string(Image.open('test4.jpg'))
     pslist = pstext.split()
+    # print('PS list:')
     # print(pslist)
 
     global ps
@@ -265,8 +242,7 @@ def pscrop_ocr(img):
     except:
         ps = 'No Person Found'
 
-    os.remove('test2.jpg')
-
+    os.remove('test4.jpg')
 
 
 
@@ -275,7 +251,6 @@ def pscrop_ocr(img):
 # The following function takes a jpg image as input, pulls the text from
 # that entire image, stores the text in a list, separated by spaces, and then
 # searches for the Receiving Report #, the Purchase Order #, and the date.
-
 def full_ocr(imgfile):
     fulltext = pytesseract.image_to_string(Image.open(imgfile))
     fulllist = fulltext.split()
@@ -285,9 +260,33 @@ def full_ocr(imgfile):
     global po2
     global dt2
     global ps2
+    global isgr2
 
 
-
+    # This checks to see if the file is a GR.
+    if fulllist == []:
+        isgr2 = False
+    try:
+        for i in range(len(fulllist)):
+            if (fulllist[i]=='No.' or fulllist[i]=='NO.' or fulllist[i]=='N0.' \
+            or fulllist[i]=='no.' or fulllist[i]=='nO.' or fulllist[i]=='n0.') \
+            and (fulllist[i+2] == 'Page' or fulllist[i+2] == 'page') \
+            and re.match('[5][0][0]\d{7}', fulllist[i+1]) is not None:
+                isgr2 = True
+                break
+            elif (fulllist[i]=='No.' or fulllist[i]=='NO.' or fulllist[i]=='N0.' \
+            or fulllist[i]=='no.' or fulllist[i]=='nO.' or fulllist[i]=='n0.') \
+            and re.match('[5][0][0]\d{7}', fulllist[i+1]) is not None:
+                isgr2 = True
+                break
+            elif re.match('[5][0][0]\d{7}', fulllist[i]) is not None \
+            and fulllist[i+1]=='Page' or fulllist[i+1]=='page':
+                isgr2 = True
+                break
+            else:
+                isgr2 = False
+    except:
+        isgr2 = False
 
 
     # This finds the Receiving Report #
@@ -303,15 +302,12 @@ def full_ocr(imgfile):
                 rr2 = str(re.match('[5][0][0]\d{7}', fulllist[i+1]).group())
                 break
             elif re.match('[5][0][0]\d{7}', fulllist[i]) is not None:
-                rr2 = str(re.match('[5][0][0]\d{7}', fulllist[i]))
+                rr2 = str(re.match('[5][0][0]\d{7}', fulllist[i]).group())
                 break
             else:
                 rr2 = 'No Receiving Report # Found'
     except:
         rr2 = 'No Receiving Report # Found'
-
-
-
 
 
     # This finds the Purchasing Order #
@@ -341,9 +337,6 @@ def full_ocr(imgfile):
         po2 = 'No Purchase Order # Found'
 
 
-
-
-
     # This finds the date
     try:
         for i in range(len(fulllist)):
@@ -363,9 +356,6 @@ def full_ocr(imgfile):
                 dt2 = 'No Date Found'
     except:
         dt2 = 'No Date Found'
-
-
-
 
 
     # This finds the person
@@ -400,10 +390,10 @@ def full_ocr(imgfile):
 
 
 
-
-
-
-
+# The following function takes a jpg image as input, crops that image
+# down to a smaller section around the GR identifier, pulls the text
+# from that image, stores the text in a list, searches for the GR identifier,
+# and stores whether it is a GR or not as a boolean variable.
 def gr_cropocr(img):
     original = Image.open(img)
 
@@ -419,15 +409,13 @@ def gr_cropocr(img):
         l,u,r,d = 3000,0,5000,500
 
     cropped_img = original.crop((l,u,r,d))
-    cropped_img.save('test.jpg')
+    cropped_img.save('test5.jpg')
     # cropped_img.show()
 
-    croptext = pytesseract.image_to_string(Image.open('test.jpg'))
+    croptext = pytesseract.image_to_string(Image.open('test5.jpg'))
     rrlist = croptext.split()
-    # print(rrlist)
 
     global isgr
-    global pg
 
     if rrlist == []:
         isgr = False
@@ -453,180 +441,121 @@ def gr_cropocr(img):
     except:
         isgr = False
 
-    os.remove('test.jpg')
+    os.remove('test5.jpg')
 
 
 
 
-
-
-
-
-
-
-def gr_fullocr(img):
-    fulltext = pytesseract.image_to_string(Image.open(img))
-    fulllist = fulltext.split()
-    # print(fulllist)
-
-    global isgr2
-    global pg2
-
-    if fulllist == []:
-        isgr2 = False
-
-    try:
-        for i in range(len(fulllist)):
-            if (fulllist[i]=='No.' or fulllist[i]=='NO.' or fulllist[i]=='N0.' \
-            or fulllist[i]=='no.' or fulllist[i]=='nO.' or fulllist[i]=='n0.') \
-            and (fulllist[i+2] == 'Page' or fulllist[i+2] == 'page') \
-            and re.match('[5][0][0]\d{7}', fulllist[i+1]) is not None:
-                isgr2 = True
-                break
-            elif (fulllist[i]=='No.' or fulllist[i]=='NO.' or fulllist[i]=='N0.' \
-            or fulllist[i]=='no.' or fulllist[i]=='nO.' or fulllist[i]=='n0.') \
-            and re.match('[5][0][0]\d{7}', fulllist[i+1]) is not None:
-                isgr2 = True
-                break
-            elif re.match('[5][0][0]\d{7}', fulllist[i]) is not None \
-            and fulllist[i+1]=='Page' or fulllist[i+1]=='page':
-                isgr2 = True
-                break
-            else:
-                isgr2 = False
-    except:
-        isgr2 = False
-
-
-
-
-
-
-
-
-
-# The following is a for loop that iterates through every file in filenames
-# and places all of the gr files into the grfilenames list and all of the
-# pt files into the ptfilenames list based on the OCR'd corner of the page.
-
-def full_sort(filenames):
-    global allfilenames
-    allfilenames = []
-    counter = 1
-    counter2 = 1
-    for file in filenames:
-        gr_cropocr(file)
-        gr_fullocr(file)
-    
-        if isgr == True or isgr2 == True:
-            os.rename(file, str(counter) + '.jpg')
-            allfilenames.append(str(counter) + '.jpg')
-            counter += 1
-            counter2 = 1
-        else:
-            os.rename(file, str((counter - 1)) + '.' + str(counter2) \
-            +  '.jpg')
-            allfilenames.append(str((counter - 1)) + '.' + str(counter2) \
-            + '.jpg')
-            counter2 += 1
-
-
-
-
-def delete_duplicates(allfilenames):
-    global grfilenames
-    global ptfilenames
-    global dicta
-
-    k = 0
-    while k < len(allfilenames):
-        if k >= 1:
-            if len(allfilenames[k].split('.')) == 2:
-                if len(allfilenames[k-1].split('.')) == 2:
-                    os.remove(allfilenames[k-1])                    
-                    del allfilenames[k-1]
-                    k -= 1
-            elif len(allfilenames[k].split('.')) == 3:
-                k += 0
-        k += 1
-
-    grfilenames = []
-    ptfilenames = []
-
-    for file in allfilenames:
-        if len(file.split('.')) == 2:
-            grfilenames.append(file)
-        elif len(file.split('.')) == 3:
-            ptfilenames.append(file)
-    # print(allfilenames)
-    # print(grfilenames)
-    # print(ptfilenames)
-
-    # counter = 1
-    # for i in grfilenames:
-    #     counter5 = 1
-    #     if i == (str(counter) + '.jpg'):
-    #         counter += 1
-    #     else:
-    #         os.rename(i, str(counter) + '.jpg')
-    #         grfilenames[counter - 1] = str(counter) + '.jpg'
-    #         for j in ptfilenames:
-    #             if j.startswith(i.split('.')[0]):
-    #                 os.rename(j, str(counter) + '.' + \
-    #                 str(counter5) + '.jpg')
-    #                 counter5 += 1
-    #         counter += 1
-    # print(grfilenames)
-    # print(ptfilenames)
-
-
-    # The following is a for loop that matches gr file names with pt
-    # file names based on their first character. This makes a dictionary
-    # with corresponding pages.
-    dicta = defaultdict(list)
-    for grfile in grfilenames:
-        for ptfile in ptfilenames:
-            if grfile.split('.')[0] == ptfile.split('.')[0]:
-                dicta[grfile].append(ptfile)
-    # print(dicta)
-
-
-
-
-# Filenames is a variable that stores all of the jpg files in the current
-# directory by searching for them using glob.
-filenames = glob.glob('*.jpg')
-full_sort(filenames)
-delete_duplicates(allfilenames)
-# create_lists(allfilenames)
-
+#         for j in ptfilenames:
+#             if j.startswith(i.split('.')[0]):
+#                 os.rename(j, str(counter) + '.' + \
+#                 str(counter5) + '.jpg')
+#                 counter5 += 1
+#         counter += 1
 # print(grfilenames)
 # print(ptfilenames)
-# print(allfilenames)
-# print(dicta)
 
 
-# Initializes the results.csv file with title columns as follows:
-# RR#, PO#, Name, Date
-with open('results.csv', 'w') as csvfile:
-    csvfile.write(' , Receiving Report #, Purchase Order #, Name, Date' + '\n')
 
-# Initializes the row number.
-rownumber = 1
 
-# The following iterates through each gr file name, calls each function with 
-# that specific file, compares the values of the cropped image with the
-# full image, and gives results based on that comparison.
+# EXECUTION TIME
+# The following three chunks of code execute the functions
+# and make this train go round and round.
+
+
+# Initializations
+filenames = glob.glob('*.jpg')
+allfilenames = []
+grfilenames = []
+ptfilenames = []
+counter = 1
+counter2 = 1
+with open('results.txt', 'w') as txtfile:
+    txtfile.write('Receiving Report #, Purchase Order #, Name, Date@Image File' + '\n')
+
+
+# The following iterates through each filename and gets isgr and isgr2
+# from the functions full_ocr and gr_cropocr. If it is a GR, it is
+# renamed accordingly (whole number.jpg) and then added to the list
+# allfilenames. If it is not a GR, it is renamed accordingly
+# (GRwholenumber.decimalnumber.jpg) and then added to the list
+# allfilenames.
+for file in filenames:
+    gr_cropocr(file)
+    
+    if isgr == True: #or isgr2 == True:
+        os.rename(file, str(counter) + '.jpg')
+        allfilenames.append(str(counter) + '.jpg')
+        counter += 1
+        counter2 = 1
+    else:
+        os.rename(file, str((counter - 1)) + '.' + str(counter2) \
+        +  '.jpg')
+        allfilenames.append(str((counter - 1)) + '.' + str(counter2) \
+        + '.jpg')
+        counter2 += 1
+
+
+# The following iterates through the list allfilenames and removes
+# duplicate GRs. After this is complete, the remaning GRs are
+# added to the list grfilenames and the corresponding PTs are
+# added to the list ptfilenames. After that, it then creates a 
+# dictionary called dicta that holds the GRs as keys and PTs as values.
+k = 0
+while k < len(allfilenames):
+    if k >= 1:
+        if len(allfilenames[k].split('.')) == 2:
+            if len(allfilenames[k-1].split('.')) == 2:
+                os.remove(allfilenames[k-1])                    
+                del allfilenames[k-1]
+                k -= 1
+        elif len(allfilenames[k].split('.')) == 3:
+            k += 0
+    k += 1
+
+for file in allfilenames:
+    if len(file.split('.')) == 2:
+        grfilenames.append(file)
+    elif len(file.split('.')) == 3:
+        ptfilenames.append(file)
+
+dicta = defaultdict(list)
+for grfile in grfilenames:
+    for ptfile in ptfilenames:
+        if grfile.split('.')[0] == ptfile.split('.')[0]:
+            dicta[grfile].append(ptfile)
+
+
+# The following renames the GR's into numerical order
+# after the duplicates have been removed.
+# counter = 1
+# for file in dicta:
+#     counter2 = 1
+    # counter5 = 1
+    # if file == (str(counter) + '.jpg'):
+    #     counter += 1
+    # else:
+    #     os.rename(file, str(counter) + '.jpg')
+    #     for i in dicta[file]:
+    #         i = str(counter2) + '.jpg'
+    #         counter2 += 1
+        # dicta[i] = 
+        # counter += 1
+
+
+# The following iterates only through the GR files in grfilenames
+# and uses the 4 functions to pull the RR, PO, DT, and PS from each.
+# Then, it compares the values of rr & rr2, po & po2, dt & dt2, and
+# ps & ps2. Based on this comparison, final values are assigned to
+# the variables recrep, purord, date, and person, respectively.
+# All of these final values are then added to the csv file for each
+# file in grfilenames.
 for file in grfilenames:
     full_ocr(file)
     rrcrop_ocr(file)
     pocrop_ocr(file)
     dtcrop_ocr(file)
     pscrop_ocr(file)
-
-    for i in dicta[file]:
-        image = Image.open(i)
-        # image.show()
 
 
     if rr == rr2 and rr == 'No Receiving Report # Found':
@@ -638,14 +567,14 @@ for file in grfilenames:
         recrep = str(rr) + ', ' + str(rr2) + ': Check'
     elif rr != rr2 and re.match('[5][0][0]\d{7}', rr) is not None and \
     re.match('[5][0][0]\d{7}', rr2) is None:
-        recrep = str(rr) + ': Check'
+        recrep = str(rr)# + ': Check'
     elif rr != rr2 and re.match('[5][0][0]\d{7}', rr) is None and \
     re.match('[5][0][0]\d{7}', rr2) is not None:
-        recrep = str(rr2) + ': Check'
+        recrep = str(rr2)# + ': Check'
     elif rr != rr2 and re.match('[5][0][0]\d{7}', rr) is not None:
-        recrep = str(rr) + ': Check'
+        recrep = str(rr)# + ': Check'
     elif rr != rr2 and re.match('[5][0][0]\d{7}', rr2) is not None:
-        recrep = str(rr2) + ': Check'
+        recrep = str(rr2)# + ': Check'
     else:
         recrep = str(rr) + ', ' + str(rr2) + ': Check'
 
@@ -693,31 +622,45 @@ for file in grfilenames:
 
 
     if ps == ps2 and ps == 'No Person Found':
-        person = 'Check'
+        person = 'No Person Found'
     elif ps == ps2:
         person = ps
-    elif ps != ps2 and re.match('[a-zA-Z]*', ps) is not None and \
+    elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps) is not None and \
     re.match('[5][0][0]\d{7}', ps2) is not None:
         person = str(ps) + ', ' + str(ps2) + ': Check'
-    elif ps != ps2 and re.match('[a-zA-Z]*', ps) is not None and \
+    elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps) is not None and \
     re.match('[a-zA-Z]*', ps2) is None:
-        person = str(ps) + ': Check'
-    elif ps != ps2 and re.match('[a-zA-Z]*', ps) is None and \
-    re.match('[a-zA-Z]*', ps2) is not None:
-        person = str(ps2) + ': Check'
-    elif ps != ps2 and re.match('[a-zA-Z]*', ps) is not None:
-        person = str(ps) + ': Check'
-    elif ps != ps2 and re.match('[a-zA-Z]*', ps2) is not None:
-        person = str(ps2) + ': Check'
+        person = str(ps)# + ': Check'
+    elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps2) is not None and \
+    re.match('[a-zA-Z]*', ps) is None:
+        person = str(ps2)# + ': Check'
+    elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps) is not None:
+        person = str(ps)# + ': Check'
+    elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps2) is not None:
+        person = str(ps2)# + ': Check'
     else:
         person = str(ps) + ', ' + str(ps2) + ': Check'
 
 
-    csvrow = str(rownumber) + ', ' + recrep + ', ' + purord + ', ' \
-    + person + ', ' + date + '@' + str(file) + '\n'
+    multitif = 'C:\\"Program Files"\\IrfanView\\i_view64.exe /multitif=(C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\' + file.split('.')[0] + '.tif,'
+    # convert = 'C:\\"Program Files"\\IrfanView\\i_view64.exe C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\' + ptfile /convert
+    killmesoftly = 'C:\\"Program Files"\\IrfanView\\i_view64.exe /killmesoftly'
 
-    with open('results.csv', 'a') as csvfile:
-        csvfile.write(csvrow)
+    # if len(dicta[file]) > 1:
+    for ptfile in dicta[file]:
+        multitif = multitif + 'C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\' + ptfile + ','
+    os.system(multitif)
 
+    for ptfile in dicta[file]:
+        os.remove(ptfile)
 
-    rownumber += 1
+    dicta[file] = file.split('.')[0] + '.tif'
+
+    txtrow = recrep + ', ' + purord + ', ' + person + ', ' + date + \
+    '@' + dicta[file] + '\n'
+    # else:
+    #     txtrow = recrep + ', ' + purord + ', ' + person + ', ' + date + \
+    #     '@' + dicta[file][0] + '\n'
+    
+    with open('results.txt', 'a') as txtfile:
+        txtfile.write(txtrow)

@@ -1,6 +1,6 @@
-# sw-ocr16.5.py
+# sw-ocr18.py
 
-# Trying something off the wall here.
+# Increase time efficiency.
 
 import os
 import re
@@ -31,42 +31,15 @@ def rrcrop_ocr(img):
         l,u,r,d = 3000,0,5000,500
 
     rr_cropped_img = original.crop((l,u,r,d))
-    rr_cropped_img.save('test.jpg')
+    rr_cropped_img.save('test1.jpg')
 
-    rrtext = pytesseract.image_to_string(Image.open('test.jpg'))
+    rrtext = pytesseract.image_to_string(Image.open('test1.jpg'))
     rrlist = rrtext.split()
 
     global rr
-    global isgr
-
-    # This checks to see if file is a GR.
-    if rrlist == []:
-        isgr = False
-
-    try:
-        for i in range(len(rrlist)):
-            if (rrlist[i]=='No.' or rrlist[i]=='NO.' or rrlist[i]=='N0.' \
-            or rrlist[i]=='no.' or rrlist[i]=='nO.' or rrlist[i]=='n0.') \
-            and (rrlist[i+2] == 'Page' or rrlist[i+2] == 'page') \
-            and re.match('[5][0][0]\d{7}', rrlist[i+1]) is not None:
-                isgr = True
-                break
-            elif (rrlist[i]=='No.' or rrlist[i]=='NO.' or rrlist[i]=='N0.' \
-            or rrlist[i]=='no.' or rrlist[i]=='nO.' or rrlist[i]=='n0.') \
-            and re.match('[5][0][0]\d{7}', rrlist[i+1]) is not None:
-                isgr = True
-                break
-            elif re.match('[5][0][0]\d{7}', rrlist[i]) is not None:
-                isgr = True
-                break
-            else:
-                isgr = False
-    except:
-        isgr = False
 
     if rrlist == []:
         rr = 'No Receiving Report # Found'
-
     try:
         for i in range(len(rrlist)):
             if (rrlist[i]=='No.' or rrlist[i]=='NO.' or rrlist[i]=='N0.' \
@@ -86,7 +59,7 @@ def rrcrop_ocr(img):
     except:
         rr = 'No Receiving Report # Found'
 
-    os.remove('test.jpg')
+    os.remove('test1.jpg')
 
 
 
@@ -100,7 +73,7 @@ def pocrop_ocr(img):
     original = Image.open(img)
 
     dpi = original.info['dpi']
-
+    # print(dpi)
     if dpi == (600,600):
         l,u,r,d = 0,800,3000,1400
     elif dpi == (400,400):
@@ -171,9 +144,9 @@ def dtcrop_ocr(img):
         l,u,r,d = 0,400,3000,800
 
     dt_cropped_img = original.crop((l,u,r,d))
-    dt_cropped_img.save('test2.jpg')
+    dt_cropped_img.save('test3.jpg')
 
-    dttext = pytesseract.image_to_string(Image.open('test2.jpg'))
+    dttext = pytesseract.image_to_string(Image.open('test3.jpg'))
     dtlist = dttext.split()
 
     global dt
@@ -200,7 +173,7 @@ def dtcrop_ocr(img):
     except:
         dt = 'No Date Found'
 
-    os.remove('test2.jpg')
+    os.remove('test3.jpg')
 
 
 
@@ -213,7 +186,7 @@ def pscrop_ocr(img):
     original = Image.open(img)
 
     dpi = original.info['dpi']
-
+    # print(dpi)
     if dpi == (600,600):
         l,u,r,d = 0,4000,5000,6700
     elif dpi == (400,400):
@@ -224,9 +197,9 @@ def pscrop_ocr(img):
         l,u,r,d = 0,4000,5000,6700
 
     ps_cropped_img = original.crop((l,u,r,d))
-    ps_cropped_img.save('test2.jpg')
+    ps_cropped_img.save('test4.jpg')
 
-    pstext = pytesseract.image_to_string(Image.open('test2.jpg'))
+    pstext = pytesseract.image_to_string(Image.open('test4.jpg'))
     pslist = pstext.split()
 
     global ps
@@ -262,7 +235,7 @@ def pscrop_ocr(img):
     except:
         ps = 'No Person Found'
 
-    os.remove('test2.jpg')
+    os.remove('test4.jpg')
 
 
 
@@ -321,7 +294,7 @@ def full_ocr(imgfile):
                 rr2 = str(re.match('[5][0][0]\d{7}', fulllist[i+1]).group())
                 break
             elif re.match('[5][0][0]\d{7}', fulllist[i]) is not None:
-                rr2 = str(re.match('[5][0][0]\d{7}', fulllist[i]))
+                rr2 = str(re.match('[5][0][0]\d{7}', fulllist[i]).group())
                 break
             else:
                 rr2 = 'No Receiving Report # Found'
@@ -407,69 +380,101 @@ def full_ocr(imgfile):
 
 
 
-grfilenames = []
-ptfilenames = []
-allfilenames = []
-
-# Filenames is a variable that stores all of the jpg files in the current
-# directory by searching for them using glob.
-filenames = glob.glob('*.jpg')
-
-# Initializes the results.csv file with title columns as follows:
-# RR#, PO#, Name, Date
-with open('results.csv', 'w') as csvfile:
-    csvfile.write(' , Receiving Report #, Purchase Order #, Name, Date' + '\n')
-
-# Initializes the row number for the csv file.
-rownumber = 1
-
-counter = 1
-counter2 = 1
 
 
+# The following function takes a jpg image as input, crops that image
+# down to a smaller section around the GR identifier, pulls the text
+# from that image, stores the text in a list, searches for the GR identifier,
+# and stores whether it is a GR or not as a boolean variable.
+def gr_cropocr(img):
+    original = Image.open(img)
 
-# The following iterates through each filename, calls each function with 
-# that specific file, compares the values of the cropped image with the
-# full image, and stores the results in variables.
-for file in filenames:
-    full_ocr(file)
-    rrcrop_ocr(file)
-    pocrop_ocr(file)
-    dtcrop_ocr(file)
-    pscrop_ocr(file)
+    dpi = original.info['dpi']
+    # print(dpi)
+    if dpi == (600,600):
+        l,u,r,d = 2800,0,5200,500
+    elif dpi == (400,400):
+        l,u,r,d = 2000,0,3400,333
+    elif dpi == (300,300):
+        l,u,r,d = 1500,0,2550,250
+    else:
+        l,u,r,d = 3000,0,5000,500
 
-    # The following if, else statements change the names of the files
-    # based on if they are a GR file or a PT file.
-    if isgr == True or isgr2 == True:
+    cropped_img = original.crop((l,u,r,d))
+    cropped_img.save('test5.jpg')
+    # cropped_img.show()
+
+    croptext = pytesseract.image_to_string(Image.open('test5.jpg'))
+    rrlist = croptext.split()
+    # print(rrlist)
+
+    global isgr
+
+    if rrlist == []:
+        isgr = False
+
+    try:
+        for i in range(len(rrlist)):
+            if (rrlist[i]=='No.' or rrlist[i]=='NO.' or rrlist[i]=='N0.' \
+            or rrlist[i]=='no.' or rrlist[i]=='nO.' or rrlist[i]=='n0.') \
+            and (rrlist[i+2] == 'Page' or rrlist[i+2] == 'page') \
+            and re.match('[5][0][0]\d{7}', rrlist[i+1]) is not None:
+                isgr = True
+                break
+            elif (rrlist[i]=='No.' or rrlist[i]=='NO.' or rrlist[i]=='N0.' \
+            or rrlist[i]=='no.' or rrlist[i]=='nO.' or rrlist[i]=='n0.') \
+            and re.match('[5][0][0]\d{7}', rrlist[i+1]) is not None:
+                isgr = True
+                break
+            elif re.match('[5][0][0]\d{7}', rrlist[i]) is not None:
+                isgr = True
+                break
+            else:
+                isgr = False
+    except:
+        isgr = False
+
+    os.remove('test5.jpg')
+
+
+
+
+
+
+
+
+
+# The following is a for loop that iterates through every file in filenames
+# and places all of the gr files into the grfilenames list and all of the
+# pt files into the ptfilenames list based on the OCR'd corner of the page.
+
+def full_sort(filenames):
+    global allfilenames
+    allfilenames = []
+    counter = 1
+    counter2 = 1
+    for file in filenames:
+        gr_cropocr(file)
+        gr_fullocr(file)
+    
+        if isgr == True or isgr2 == True:
             os.rename(file, str(counter) + '.jpg')
             allfilenames.append(str(counter) + '.jpg')
             counter += 1
             counter2 = 1
-    else:
-        os.rename(file, str((counter - 1)) + '.' + str(counter2) \
-        +  '.jpg')
-        allfilenames.append(str((counter - 1)) + '.' + str(counter2) \
-        + '.jpg')
-        counter2 += 1
+        else:
+            os.rename(file, str((counter - 1)) + '.' + str(counter2) \
+            +  '.jpg')
+            allfilenames.append(str((counter - 1)) + '.' + str(counter2) \
+            + '.jpg')
+            counter2 += 1
 
 
-    # The following separates the filenames list into two lists:
-    # GR files (grfilenames) and PT files (ptfilenames)
-    if len(file.split('.')) == 2:
-        grfilenames.append(file)
-    elif len(file.split('.')) == 3:
-        ptfilenames.append(file)
 
-
-    # The following is a for loop that matches gr file names with pt
-    # file names based on their first character. This makes a dictionary
-    # with corresponding pages.
-    dicta = defaultdict(list)
-    for grfile in grfilenames:
-        for ptfile in ptfilenames:
-            if grfile.split('.')[0] == ptfile.split('.')[0]:
-                dicta[grfile].append(ptfile)
-
+def delete_duplicates(allfilenames):
+    global grfilenames
+    global ptfilenames
+    global dicta
 
     k = 0
     while k < len(allfilenames):
@@ -483,100 +488,171 @@ for file in filenames:
                 k += 0
         k += 1
 
+    grfilenames = []
+    ptfilenames = []
+
+    for file in allfilenames:
+        if len(file.split('.')) == 2:
+            grfilenames.append(file)
+        elif len(file.split('.')) == 3:
+            ptfilenames.append(file)
+
+    # counter = 1
+    # for i in grfilenames:
+    #     counter5 = 1
+    #     if i == (str(counter) + '.jpg'):
+    #         counter += 1
+    #     else:
+    #         os.rename(i, str(counter) + '.jpg')
+    #         grfilenames[counter - 1] = str(counter) + '.jpg'
+    #         for j in ptfilenames:
+    #             if j.startswith(i.split('.')[0]):
+    #                 os.rename(j, str(counter) + '.' + \
+    #                 str(counter5) + '.jpg')
+    #                 counter5 += 1
+    #         counter += 1
+    # print(grfilenames)
+    # print(ptfilenames)
+
+
+    # The following is a for loop that matches gr file names with pt
+    # file names based on their first character. This makes a dictionary
+    # with corresponding pages.
+    dicta = defaultdict(list)
+    for grfile in grfilenames:
+        for ptfile in ptfilenames:
+            if grfile.split('.')[0] == ptfile.split('.')[0]:
+                dicta[grfile].append(ptfile)
+    # print(dicta)
+
+
+
+
+# Filenames is a variable that stores all of the jpg files in the current
+# directory by searching for them using glob.
+filenames = glob.glob('*.jpg')
+full_sort(filenames)
+delete_duplicates(allfilenames)
+# create_lists(allfilenames)
+
+# print(grfilenames)
+# print(ptfilenames)
+# print(allfilenames)
+# print(dicta)
+
+
+# Initializes the results.csv file with title columns as follows:
+# RR#, PO#, Name, Date
+with open('results.csv', 'w') as csvfile:
+    csvfile.write(' , Receiving Report #, Purchase Order #, Name, Date, Image File' + '\n')
+
+# Initializes the row number.
+rownumber = 1
+
+# The following iterates through each gr file name, calls each function with 
+# that specific file, compares the values of the cropped image with the
+# full image, and gives results based on that comparison.
+for file in grfilenames:
+    full_ocr(file)
+    rrcrop_ocr(file)
+    pocrop_ocr(file)
+    dtcrop_ocr(file)
+    pscrop_ocr(file)
+
     for i in dicta[file]:
         image = Image.open(i)
         # image.show()
 
-    if isgr == True or isgr2 == True:
-        if rr == rr2 and rr == 'No Receiving Report # Found':
-            recrep = 'Check'
-        elif rr == rr2:
-            recrep = rr
-        elif rr != rr2 and re.match('[5][0][0]\d{7}', rr) is not None and \
-        re.match('[5][0][0]\d{7}', rr2) is not None:
-            recrep = str(rr) + ', ' + str(rr2) + ': Check'
-        elif rr != rr2 and re.match('[5][0][0]\d{7}', rr) is not None and \
-        re.match('[5][0][0]\d{7}', rr2) is None:
-            recrep = str(rr) + ': Check'
-        elif rr != rr2 and re.match('[5][0][0]\d{7}', rr) is None and \
-        re.match('[5][0][0]\d{7}', rr2) is not None:
-            recrep = str(rr2) + ': Check'
-        elif rr != rr2 and re.match('[5][0][0]\d{7}', rr) is not None:
-            recrep = str(rr) + ': Check'
-        elif rr != rr2 and re.match('[5][0][0]\d{7}', rr2) is not None:
-            recrep = str(rr2) + ': Check'
-        else:
-            recrep = str(rr) + ', ' + str(rr2) + ': Check'
+
+    if rr == rr2 and rr == 'No Receiving Report # Found':
+        recrep = 'Check'
+    elif rr == rr2:
+        recrep = rr
+    elif rr != rr2 and re.match('[5][0][0]\d{7}', rr) is not None and \
+    re.match('[5][0][0]\d{7}', rr2) is not None:
+        recrep = str(rr) + ', ' + str(rr2) + ': Check'
+    elif rr != rr2 and re.match('[5][0][0]\d{7}', rr) is not None and \
+    re.match('[5][0][0]\d{7}', rr2) is None:
+        recrep = str(rr) + ': Check'
+    elif rr != rr2 and re.match('[5][0][0]\d{7}', rr) is None and \
+    re.match('[5][0][0]\d{7}', rr2) is not None:
+        recrep = str(rr2) + ': Check'
+    elif rr != rr2 and re.match('[5][0][0]\d{7}', rr) is not None:
+        recrep = str(rr) + ': Check'
+    elif rr != rr2 and re.match('[5][0][0]\d{7}', rr2) is not None:
+        recrep = str(rr2) + ': Check'
+    else:
+        recrep = str(rr) + ', ' + str(rr2) + ': Check'
 
 
-        if po == po2 and po == 'No Purchase Order # Found':
-            purord = 'Check'
-        elif po == po2:
-            purord = po
-        elif po != po2 and re.match('[4][5][0]\d{7}', po) is not None and \
-        re.match('[4][5][0]\d{7}', po2) is not None:
-            purord = str(po) + ', ' + str(po2) + ': Check'
-        elif po != po2 and re.match('[4][5][0]\d{7}', po) is not None and \
-        re.match('[4][5][0]\d{7}', po2) is None:
-            purord = str(po) + ': Check'
-        elif po != po2 and re.match('[4][5][0]\d{7}', po) is None and \
-        re.match('[4][5][0]\d{7}', po2) is not None:
-            purord = str(po2) + ': Check'
-        elif po != po2 and re.match('[4][5][0]\d{7}', po) is not None:
-            purord = str(po) + ': Check'
-        elif po != po2 and re.match('[4][5][0]\d{7}', po2) is not None:
-            purord = str(po2) + ': Check'
-        else:
-            purord = str(po) + ', ' + str(po2) + ': Check'
+    if po == po2 and po == 'No Purchase Order # Found':
+        purord = 'Check'
+    elif po == po2:
+        purord = po
+    elif po != po2 and re.match('[4][5][0]\d{7}', po) is not None and \
+    re.match('[4][5][0]\d{7}', po2) is not None:
+        purord = str(po) + ', ' + str(po2) + ': Check'
+    elif po != po2 and re.match('[4][5][0]\d{7}', po) is not None and \
+    re.match('[4][5][0]\d{7}', po2) is None:
+        purord = str(po) + ': Check'
+    elif po != po2 and re.match('[4][5][0]\d{7}', po) is None and \
+    re.match('[4][5][0]\d{7}', po2) is not None:
+        purord = str(po2) + ': Check'
+    elif po != po2 and re.match('[4][5][0]\d{7}', po) is not None:
+        purord = str(po) + ': Check'
+    elif po != po2 and re.match('[4][5][0]\d{7}', po2) is not None:
+        purord = str(po2) + ': Check'
+    else:
+        purord = str(po) + ', ' + str(po2) + ': Check'
 
 
-        if dt == dt2 and dt == 'No Date Found':
-            date = 'Check'
-        elif dt == dt2:
-            date = dt
-        elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is not None and \
-        re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is not None:
-            date = str(dt) + ', ' + str(dt2) + ': Check'
-        elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is not None and \
-        re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is None:
-            date = str(dt) + ': Check'
-        elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is None and \
-        re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is not None:
-            date = str(dt2) + ': Check'
-        elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is not None:
-            date = str(dt) + ': Check'
-        elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is not None:
-            date = str(dt2) + ': Check'
-        else:
-            date = str(dt) + ', ' + str(dt2) + ': Check'
+    if dt == dt2 and dt == 'No Date Found':
+        date = 'Check'
+    elif dt == dt2:
+        date = dt
+    elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is not None and \
+    re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is not None:
+        date = str(dt) + ', ' + str(dt2) + ': Check'
+    elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is not None and \
+    re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is None:
+        date = str(dt) + ': Check'
+    elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is None and \
+    re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is not None:
+        date = str(dt2) + ': Check'
+    elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is not None:
+        date = str(dt) + ': Check'
+    elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is not None:
+        date = str(dt2) + ': Check'
+    else:
+        date = str(dt) + ', ' + str(dt2) + ': Check'
 
 
-        if ps == ps2 and ps == 'No Person Found':
-            person = 'Check'
-        elif ps == ps2:
-            person = ps
-        elif ps != ps2 and re.match('[a-zA-Z]*', ps) is not None and \
-        re.match('[5][0][0]\d{7}', ps2) is not None:
-            person = str(ps) + ', ' + str(ps2) + ': Check'
-        elif ps != ps2 and re.match('[a-zA-Z]*', ps) is not None and \
-        re.match('[a-zA-Z]*', ps2) is None:
-            person = str(ps) + ': Check'
-        elif ps != ps2 and re.match('[a-zA-Z]*', ps) is None and \
-        re.match('[a-zA-Z]*', ps2) is not None:
-            person = str(ps2) + ': Check'
-        elif ps != ps2 and re.match('[a-zA-Z]*', ps) is not None:
-            person = str(ps) + ': Check'
-        elif ps != ps2 and re.match('[a-zA-Z]*', ps2) is not None:
-            person = str(ps2) + ': Check'
-        else:
-            person = str(ps) + ', ' + str(ps2) + ': Check'
+    if ps == ps2 and ps == 'No Person Found':
+        person = 'No Person Found'
+    elif ps == ps2:
+        person = ps
+    elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps) is not None and \
+    re.match('[5][0][0]\d{7}', ps2) is not None:
+        person = str(ps) + ', ' + str(ps2) + ': Check'
+    elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps) is not None and \
+    re.match('[a-zA-Z]*', ps2) is None:
+        person = str(ps) + ': Check'
+    elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps2) is not None and \
+    re.match('[a-zA-Z]*', ps) is None:
+        person = str(ps2) + ': Check'
+    elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps) is not None:
+        person = str(ps) + ': Check'
+    elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps2) is not None:
+        person = str(ps2) + ': Check'
+    else:
+        person = str(ps) + ', ' + str(ps2) + ': Check'
 
 
-        csvrow = str(rownumber) + ', ' + recrep + ', ' + purord + ', ' \
-        + person + ', ' + date + '@' + str(file) + '\n'
+    csvrow = str(rownumber) + ', ' + recrep + ', ' + purord + ', ' \
+    + person + ', ' + date + ', ' + ' '.join(str(x) for x in dicta[file]) + '\n'
 
-        with open('results.csv', 'a') as csvfile:
-            csvfile.write(csvrow)
+    with open('results.csv', 'a') as csvfile:
+        csvfile.write(csvrow)
 
 
-        rownumber += 1
+    rownumber += 1
