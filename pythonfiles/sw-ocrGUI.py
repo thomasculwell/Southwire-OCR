@@ -2,8 +2,8 @@
 
 import sys
 from typing import *
-from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant
 from PyQt5.QtWidgets import (
+    QMainWindow,
     QApplication,
     QWidget,
     QLabel,
@@ -21,16 +21,14 @@ from PyQt5.QtGui import (
     QPixmap)
 from pprint import pprint
 
-class MainWindow(QWidget):
-
+class MainWindow(QMainWindow):
     def __init__(self):
-        super(MainWindow, self).__init__()
+        super().__init__()
         self.setWindowTitle('Southwire-ApplicationXtender Automation GUI')
-
         self.show_instructions_button = QPushButton('Instructions')
         self.show_instructions_button.setEnabled(True)
         # self.table_view.clicked.connect(self.enable_show_pet_item_button)
-        self.show_instructions_button.clicked.connect(self.show_instructions_item)
+        self.show_instructions_button.clicked.connect(self.show_instructions_button)
         
         
         self.start = QPushButton('Start')
@@ -58,10 +56,8 @@ class MainWindow(QWidget):
         selected_pet_item = self.table_model.row(current_pet_index)
         PetDetailsDialog(selected_pet_item).exec()
 
-    def show_shelter_item(self):
-        current_shelter_index = self.table_view.currentIndex().row()
-        selected_shelter_item = self.table_model.row(current_shelter_index)
-        ShelterDetailsDialog(current_shelter_index, selected_shelter_item).exec()
+    def show_instructions_button(self):
+        instructionsWindow().exec()
 
 
 

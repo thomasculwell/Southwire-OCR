@@ -552,12 +552,12 @@ for file in dicta:
     # a full page OCR scan and sets the variable recrep equal
     # to their match or a regex match of one of them.
     if rr == rr2 and rr == 'No Receiving Report # Found':
-        recrep = 'Check'
+        recrep = 'No Receiving Report # Found. Need to check.'
     elif rr == rr2:
         recrep = rr
     elif rr != rr2 and re.match('[5][0][0]\d{7}', rr) is not None and \
     re.match('[5][0][0]\d{7}', rr2) is not None:
-        recrep = str(rr) + ', ' + str(rr2) + ': Check'
+        recrep = 'Need to Check: Either ' + str(rr) + ' or ' + str(rr2)
     elif rr != rr2 and re.match('[5][0][0]\d{7}', rr) is not None and \
     re.match('[5][0][0]\d{7}', rr2) is None:
         recrep = str(rr)# + ': Check'
@@ -569,67 +569,67 @@ for file in dicta:
     elif rr != rr2 and re.match('[5][0][0]\d{7}', rr2) is not None:
         recrep = str(rr2)# + ': Check'
     else:
-        recrep = str(rr) + ', ' + str(rr2) + ': Check'
+        recrep = 'Need to Check: Either ' + str(rr) + ' or ' + str(rr2)
 
     # The following compares the purchase order found from
     # a cropped OCR scan and the purchase order found from
     # a full page OCR scan and sets the variable purord equal
     # to their match or a regex match of one of them.
     if po == po2 and po == 'No Purchase Order # Found':
-        purord = 'Check'
+        purord = 'No Purchase Order # Found. Need to check.'
     elif po == po2:
         purord = po
     elif po != po2 and re.match('[4][5][0]\d{7}', po) is not None and \
     re.match('[4][5][0]\d{7}', po2) is not None:
-        purord = str(po) + ', ' + str(po2) + ': Check'
+        purord = 'Need to Check: Either ' + str(po) + ' or ' + str(po2)
     elif po != po2 and re.match('[4][5][0]\d{7}', po) is not None and \
     re.match('[4][5][0]\d{7}', po2) is None:
-        purord = str(po) + ': Check'
+        purord = str(po)# + ': Check'
     elif po != po2 and re.match('[4][5][0]\d{7}', po) is None and \
     re.match('[4][5][0]\d{7}', po2) is not None:
-        purord = str(po2) + ': Check'
+        purord = str(po2)# + ': Check'
     elif po != po2 and re.match('[4][5][0]\d{7}', po) is not None:
-        purord = str(po) + ': Check'
+        purord = str(po)# + ': Check'
     elif po != po2 and re.match('[4][5][0]\d{7}', po2) is not None:
-        purord = str(po2) + ': Check'
+        purord = str(po2)# + ': Check'
     else:
-        purord = str(po) + ', ' + str(po2) + ': Check'
+        purord = 'Need to Check: Either ' + str(po) + ' or ' + str(po2)
 
     # The following compares the date found from
     # a cropped OCR scan and the date found from
     # a full page OCR scan and sets the variable date equal
     # to their match or a regex match of one of them.
     if dt == dt2 and dt == 'No Date Found':
-        date = 'Check'
+        date = 'No date found. Need to check.'
     elif dt == dt2:
         date = dt
     elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is not None and \
     re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is not None:
-        date = str(dt) + ', ' + str(dt2) + ': Check'
+        date = 'Need to Check: Either ' + str(dt) + ' or ' + str(dt2)
     elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is not None and \
     re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is None:
-        date = str(dt) + ': Check'
+        date = str(dt)# + ': Check'
     elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is None and \
     re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is not None:
-        date = str(dt2) + ': Check'
+        date = str(dt2)# + ': Check'
     elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is not None:
-        date = str(dt) + ': Check'
+        date = str(dt)# + ': Check'
     elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is not None:
-        date = str(dt2) + ': Check'
+        date = str(dt2)# + ': Check'
     else:
-        date = str(dt) + ', ' + str(dt2) + ': Check'
+        date = 'Need to Check: Either ' + str(dt) + ' or ' + str(dt2)
 
     # The following compares the name found from
     # a cropped OCR scan and the name found from
     # a full page OCR scan and sets the variable person equal
     # to their match or a regex match of one of them.
     if ps == ps2 and ps == 'No Person Found':
-        person = 'No Person Found'
+        person = 'No Person Found. Need to Check.'
     elif ps == ps2:
         person = ps
     elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps) is not None and \
     re.match('[5][0][0]\d{7}', ps2) is not None:
-        person = str(ps) + ', ' + str(ps2) + ': Check'
+        person = 'Need to Check: Either ' + str(ps) + ' or ' + str(ps2)
     elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps) is not None and \
     re.match('[a-zA-Z]*', ps2) is None:
         person = str(ps)# + ': Check'
@@ -641,7 +641,7 @@ for file in dicta:
     elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps2) is not None:
         person = str(ps2)# + ': Check'
     else:
-        person = str(ps) + ', ' + str(ps2) + ': Check'
+        person = 'Need to Check: Either ' + str(ps) + ' or ' + str(ps2)
 
     # The following is a command line call that converts several
     # input image files into one multi-page .tif file.
