@@ -30,7 +30,7 @@ def rrcrop_ocr(img):
     elif dpi == (300,300):
         l,u,r,d = 1500,0,2550,250
     else:
-        l,u,r,d = 3000,0,5000,500
+        l,u,r,d = 3000,0,5100,500
 
     rr_cropped_img = original.crop((l,u,r,d))
     rr_cropped_img.save('test1.jpg')
@@ -50,14 +50,14 @@ def rrcrop_ocr(img):
             if (rrlist[i]=='No.' or rrlist[i]=='NO.' or rrlist[i]=='N0.' \
             or rrlist[i]=='no.' or rrlist[i]=='nO.' or rrlist[i]=='n0.') \
             and (rrlist[i+2] == 'Page' or rrlist[i+2] == 'page'):
-                rr = str(re.match('[5][0][0]\d{7}', rrlist[i+1]).group())
+                rr = str(re.match('[5][0]\d{8}', rrlist[i+1]).group())
                 break
             elif rrlist[i]=='No.' or rrlist[i]=='NO.' or rrlist[i]=='N0.' \
             or rrlist[i]=='no.' or rrlist[i]=='nO.' or rrlist[i]=='n0.':
-                rr = str(re.match('[5][0][0]\d{7}', rrlist[i+1]).group())
+                rr = str(re.match('[5][0]\d{8}', rrlist[i+1]).group())
                 break
-            elif re.match('[5][0][0]\d{7}', rrlist[i]) is not None:
-                rr = str(re.match('[5][0][0]\d{7}', rrlist[i]).group())
+            elif re.match('[5][0]\d{8}', rrlist[i]) is not None:
+                rr = str(re.match('[5][0]\d{8}', rrlist[i]).group())
                 break
             else:
                 rr = 'No Receiving Report # Found'
@@ -105,19 +105,19 @@ def pocrop_ocr(img):
             or polist[i]=='pO' or polist[i]=='p0' or polist[i]=='po') \
             and (polist[i+1]==':' or polist[i+1]=='i' or polist[i+1]=='l' \
             or polist[i+1]=='I'):
-                po = str(re.match('[4][5][0]\d{7}', polist[i+2]).group())
+                po = str(re.match('[4][5]\d{8}', polist[i+2]).group())
                 break
             elif (polist[i]=='PO' or polist[i]=='P0' or polist[i]=='Po' \
             or polist[i]=='pO' or polist[i]=='p0' or polist[i]=='po') \
             and (polist[i+2]==':' or polist[i+2]=='i'):
-                po = str(re.match('[4][5][0]\d{7}', polist[i+3]).group())
+                po = str(re.match('[4][5]\d{8}', polist[i+3]).group())
                 break
             elif (polist[i]=='PO:' or polist[i]=='P0:' or polist[i]=='Po:' \
             or polist[i]=='pO:' or polist[i]=='p0:' or polist[i]=='po:'):
-                po = str(re.match('[4][5][0]\d{7}', polist[i+1]).group())
+                po = str(re.match('[4][5]\d{8}', polist[i+1]).group())
                 break
-            elif re.match('[4][5][0]\d{7}', polist[i]) is not None:
-                po = str(re.match('[4][5][0]\d{7}', polist[i]).group())
+            elif re.match('[4][5]\d{8}', polist[i]) is not None:
+                po = str(re.match('[4][5]\d{8}', polist[i]).group())
                 break
             else:
                 po = 'No Purchase Order # Found'
@@ -272,15 +272,15 @@ def full_ocr(imgfile):
     #         if (fulllist[i]=='No.' or fulllist[i]=='NO.' or fulllist[i]=='N0.' \
     #         or fulllist[i]=='no.' or fulllist[i]=='nO.' or fulllist[i]=='n0.') \
     #         and (fulllist[i+2] == 'Page' or fulllist[i+2] == 'page') \
-    #         and re.match('[5][0][0]\d{7}', fulllist[i+1]) is not None:
+    #         and re.match('[5][0]\d{8}', fulllist[i+1]) is not None:
     #             isgr2 = True
     #             break
     #         elif (fulllist[i]=='No.' or fulllist[i]=='NO.' or fulllist[i]=='N0.' \
     #         or fulllist[i]=='no.' or fulllist[i]=='nO.' or fulllist[i]=='n0.') \
-    #         and re.match('[5][0][0]\d{7}', fulllist[i+1]) is not None:
+    #         and re.match('[5][0]\d{8}', fulllist[i+1]) is not None:
     #             isgr2 = True
     #             break
-    #         elif re.match('[5][0][0]\d{7}', fulllist[i]) is not None \
+    #         elif re.match('[5][0]\d{8}', fulllist[i]) is not None \
     #         and fulllist[i+1]=='Page' or fulllist[i+1]=='page':
     #             isgr2 = True
     #             break
@@ -296,14 +296,14 @@ def full_ocr(imgfile):
             if (fulllist[i]=='No.' or fulllist[i]=='NO.' or fulllist[i]=='N0.' \
             or fulllist[i]=='no.' or fulllist[i]=='nO.' or fulllist[i]=='n0.') \
             and (fulllist[i+2] == 'Page' or fulllist[i+2] == 'page'):
-                rr2 = str(re.match('[5][0][0]\d{7}', fulllist[i+1]).group())
+                rr2 = str(re.match('[5][0]\d{8}', fulllist[i+1]).group())
                 break
             elif fulllist[i]=='No.' or fulllist[i]=='NO.' or fulllist[i]=='N0.' \
             or fulllist[i]=='no.' or fulllist[i]=='nO.' or fulllist[i]=='n0.':
-                rr2 = str(re.match('[5][0][0]\d{7}', fulllist[i+1]).group())
+                rr2 = str(re.match('[5][0]\d{8}', fulllist[i+1]).group())
                 break
-            elif re.match('[5][0][0]\d{7}', fulllist[i]) is not None:
-                rr2 = str(re.match('[5][0][0]\d{7}', fulllist[i]).group())
+            elif re.match('[5][0]\d{8}', fulllist[i]) is not None:
+                rr2 = str(re.match('[5][0]\d{8}', fulllist[i]).group())
                 break
             else:
                 rr2 = 'No Receiving Report # Found'
@@ -318,19 +318,19 @@ def full_ocr(imgfile):
             or fulllist[i]=='pO' or fulllist[i]=='p0' or fulllist[i]=='po') \
             and (fulllist[i+1]==':' or fulllist[i+1]=='i' or fulllist[i+1]=='l' \
             or fulllist[i+1]=='I'):
-                po2 = str(re.match('[4][5][0]\d{7}', fulllist[i+2]).group())
+                po2 = str(re.match('[4][5]\d{8}', fulllist[i+2]).group())
                 break
             elif (fulllist[i]=='PO' or fulllist[i]=='P0' or fulllist[i]=='Po' \
             or fulllist[i]=='pO' or fulllist[i]=='p0' or fulllist[i]=='po') \
             and (fulllist[i+2]==':' or fulllist[i+2]=='i'):
-                po2 = str(re.match('[4][5][0]\d{7}', fulllist[i+3]).group())
+                po2 = str(re.match('[4][5]\d{8}', fulllist[i+3]).group())
                 break
             elif (fulllist[i]=='PO:' or fulllist[i]=='P0:' or fulllist[i]=='Po:' \
             or fulllist[i]=='pO:' or fulllist[i]=='p0:' or fulllist[i]=='po:'):
-                po2 = str(re.match('[4][5][0]\d{7}', fulllist[i+1]).group())
+                po2 = str(re.match('[4][5]\d{8}', fulllist[i+1]).group())
                 break
-            elif re.match('[4][5][0]\d{7}', fulllist[i]) is not None:
-                po2 = str(re.match('[4][5][0]\d{7}', fulllist[i]).group())
+            elif re.match('[4][5]\d{8}', fulllist[i]) is not None:
+                po2 = str(re.match('[4][5]\d{8}', fulllist[i]).group())
                 break
             else:
                 po2 = 'No Purchase Order # Found'
@@ -407,7 +407,7 @@ def gr_cropocr(img):
     elif dpi == (300,300):
         l,u,r,d = 1500,0,2550,250
     else:
-        l,u,r,d = 3000,0,5000,500
+        l,u,r,d = 2800,0,5200,500
 
     cropped_img = original.crop((l,u,r,d))
     cropped_img.save('test5.jpg')
@@ -415,6 +415,7 @@ def gr_cropocr(img):
 
     croptext = pytesseract.image_to_string(Image.open('test5.jpg'))
     rrlist = croptext.split()
+    print(rrlist)
 
     global isgr
 
@@ -426,15 +427,15 @@ def gr_cropocr(img):
             if (rrlist[i]=='No.' or rrlist[i]=='NO.' or rrlist[i]=='N0.' \
             or rrlist[i]=='no.' or rrlist[i]=='nO.' or rrlist[i]=='n0.') \
             and (rrlist[i+2] == 'Page' or rrlist[i+2] == 'page') \
-            and re.match('[5][0][0]\d{7}', rrlist[i+1]) is not None:
+            and re.match('[5][0]\d{8}', rrlist[i+1]) is not None:
                 isgr = True
                 break
             elif (rrlist[i]=='No.' or rrlist[i]=='NO.' or rrlist[i]=='N0.' \
             or rrlist[i]=='no.' or rrlist[i]=='nO.' or rrlist[i]=='n0.') \
-            and re.match('[5][0][0]\d{7}', rrlist[i+1]) is not None:
+            and re.match('[5][0]\d{8}', rrlist[i+1]) is not None:
                 isgr = True
                 break
-            elif re.match('[5][0][0]\d{7}', rrlist[i]) is not None:
+            elif re.match('[5][0]\d{8}', rrlist[i]) is not None:
                 isgr = True
                 break
             else:
@@ -555,18 +556,18 @@ for file in dicta:
         recrep = 'No Receiving Report # Found. Need to check.'
     elif rr == rr2:
         recrep = rr
-    elif rr != rr2 and re.match('[5][0][0]\d{7}', rr) is not None and \
-    re.match('[5][0][0]\d{7}', rr2) is not None:
+    elif rr != rr2 and re.match('[5][0]\d{8}', rr) is not None and \
+    re.match('[5][0]\d{8}', rr2) is not None:
         recrep = 'Need to Check: Either ' + str(rr) + ' or ' + str(rr2)
-    elif rr != rr2 and re.match('[5][0][0]\d{7}', rr) is not None and \
-    re.match('[5][0][0]\d{7}', rr2) is None:
+    elif rr != rr2 and re.match('[5][0]\d{8}', rr) is not None and \
+    re.match('[5][0]\d{8}', rr2) is None:
         recrep = str(rr)# + ': Check'
-    elif rr != rr2 and re.match('[5][0][0]\d{7}', rr) is None and \
-    re.match('[5][0][0]\d{7}', rr2) is not None:
+    elif rr != rr2 and re.match('[5][0]\d{8}', rr) is None and \
+    re.match('[5][0]\d{8}', rr2) is not None:
         recrep = str(rr2)# + ': Check'
-    elif rr != rr2 and re.match('[5][0][0]\d{7}', rr) is not None:
+    elif rr != rr2 and re.match('[5][0]\d{8}', rr) is not None:
         recrep = str(rr)# + ': Check'
-    elif rr != rr2 and re.match('[5][0][0]\d{7}', rr2) is not None:
+    elif rr != rr2 and re.match('[5][0]\d{8}', rr2) is not None:
         recrep = str(rr2)# + ': Check'
     else:
         recrep = 'Need to Check: Either ' + str(rr) + ' or ' + str(rr2)
@@ -579,18 +580,18 @@ for file in dicta:
         purord = 'No Purchase Order # Found. Need to check.'
     elif po == po2:
         purord = po
-    elif po != po2 and re.match('[4][5][0]\d{7}', po) is not None and \
-    re.match('[4][5][0]\d{7}', po2) is not None:
+    elif po != po2 and re.match('[4][5]\d{8}', po) is not None and \
+    re.match('[4][5]\d{8}', po2) is not None:
         purord = 'Need to Check: Either ' + str(po) + ' or ' + str(po2)
-    elif po != po2 and re.match('[4][5][0]\d{7}', po) is not None and \
-    re.match('[4][5][0]\d{7}', po2) is None:
+    elif po != po2 and re.match('[4][5]\d{8}', po) is not None and \
+    re.match('[4][5]\d{8}', po2) is None:
         purord = str(po)# + ': Check'
-    elif po != po2 and re.match('[4][5][0]\d{7}', po) is None and \
-    re.match('[4][5][0]\d{7}', po2) is not None:
+    elif po != po2 and re.match('[4][5]\d{8}', po) is None and \
+    re.match('[4][5]\d{8}', po2) is not None:
         purord = str(po2)# + ': Check'
-    elif po != po2 and re.match('[4][5][0]\d{7}', po) is not None:
+    elif po != po2 and re.match('[4][5]\d{8}', po) is not None:
         purord = str(po)# + ': Check'
-    elif po != po2 and re.match('[4][5][0]\d{7}', po2) is not None:
+    elif po != po2 and re.match('[4][5]\d{8}', po2) is not None:
         purord = str(po2)# + ': Check'
     else:
         purord = 'Need to Check: Either ' + str(po) + ' or ' + str(po2)
@@ -628,7 +629,7 @@ for file in dicta:
     elif ps == ps2:
         person = ps
     elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps) is not None and \
-    re.match('[5][0][0]\d{7}', ps2) is not None:
+    re.match('[5][0]\d{8}', ps2) is not None:
         person = 'Need to Check: Either ' + str(ps) + ' or ' + str(ps2)
     elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps) is not None and \
     re.match('[a-zA-Z]*', ps2) is None:
@@ -645,7 +646,7 @@ for file in dicta:
 
     # The following is a command line call that converts several
     # input image files into one multi-page .tif file.
-    multitif = 'C:\\"Program Files"\\IrfanView\\i_view64.exe /multitif=(C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\' + file.split('.')[0] + '.tif,'
+    multitif = 'C:\\"Program Files"\\IrfanView\\i_view64.exe /multitif=(C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\1000-1499\\' + file.split('.')[0] + '.tif,'
 
     # The following determines whether to use the multitif command
     # line function or the convert command line function on the
@@ -654,13 +655,13 @@ for file in dicta:
     # multitif is used. If there is only one, convert is used.
     if len(dicta[file]) > 1:
         for ptfile in dicta[file]:
-            multitif = multitif + 'C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\' + ptfile + ','
+            multitif = multitif + 'C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\1000-1499\\' + ptfile + ','
         multitif = multitif[:-1]
         multitif = multitif + '/killmesoftly'
         os.system(multitif)
     else:
         for ptfile in dicta[file]:
-            convert = 'C:\\"Program Files"\\IrfanView\\i_view64.exe C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\' + ptfile + ' /convert=C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\' + file.split('.')[0] + '.tif'
+            convert = 'C:\\"Program Files"\\IrfanView\\i_view64.exe C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\1000-1499\\' + ptfile + ' /convert=C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\1000-1499\\' + file.split('.')[0] + '.tif'
         os.system(convert)
 
     # The following deletes the old ptfiles from dicta.

@@ -1,8 +1,6 @@
-# sw-ocr21.py
+# sw-ocr.py
 
-# Merge multiple matching ptfiles into one
-# tif file and convert jpg files to tif and
-# order the files in one by one acending order.
+# Final Draft
 
 import os
 import re
@@ -450,233 +448,238 @@ def gr_cropocr(img):
 # EXECUTION TIME
 # The following three chunks of code execute the functions
 # and make this train go round and round.
+def main(args):
+
+    # Initializations
+    user = (args[1])
+    filenames = glob.glob('*.jpg')
+    allfilenames = []
+    grfilenames = []
+    ptfilenames = []
+    counter1 = 1
+    counter2 = 1
+    counter3 = 1
+    counter4 = 1
+
+    # The following creates a .txt file and writes the first line to it.
+    with open('results.txt', 'w') as txtfile:
+        txtfile.write('Receiving Report #, Purchase Order #, Name, Date@Image File' + '\n')
 
 
-# Initializations
-filenames = glob.glob('*.jpg')
-allfilenames = []
-grfilenames = []
-ptfilenames = []
-counter1 = 1
-counter2 = 1
-counter3 = 1
-counter4 = 1
+    # The following iterates through each filename and gets isgr
+    # from the function  gr_cropocr. If it is a goods receipt (if isgr = True),
+    # it is renamed accordingly (whole number.jpg) and then added to the list
+    # allfilenames. If it is not a goods receipt, it is renamed accordingly
+    # (GRwholenumber.decimalnumber.jpg) and then added to the list
+    # allfilenames.
+    for file in filenames:
+        gr_cropocr(file)
+        if isgr == True: #or isgr2 == True:
+            os.rename(file, str(counter1) + '.jpg')
+            allfilenames.append(str(counter1) + '.jpg')
+            counter1 += 1
+            counter2 = 1
+        else:
+            os.rename(file, str((counter1 - 1)) + '.' + str(counter2) \
+            +  '.jpg')
+            allfilenames.append(str((counter1 - 1)) + '.' + str(counter2) \
+            + '.jpg')
+            counter2 += 1
 
-# The following creates a .txt file and writes the first line to it.
-with open('results.txt', 'w') as txtfile:
-    txtfile.write('Receiving Report #, Purchase Order #, Name, Date@Image File' + '\n')
+    # The following loops iterate through the list allfilenames and removes
+    # duplicate GRs.
+    k = 1
+    while k < len(allfilenames):
+        if len(allfilenames[k].split('.')) == 2 and \
+        len(allfilenames[k-1].split('.')) == 2:
+            os.remove(allfilenames[k-1])                    
+            del allfilenames[k-1]
+            k -= 1
+        k += 1
 
+    # The following loop iterates through the files in allfilenames and
+    # appends the good receipt files to grfilenames and the picking ticket
+    # files to ptfilenames.
+    for file in allfilenames:
+        if len(file.split('.')) == 2:
+            grfilenames.append(file)
+        elif len(file.split('.')) == 3:
+            ptfilenames.append(file)
 
-# The following iterates through each filename and gets isgr
-# from the function  gr_cropocr. If it is a goods receipt (if isgr = True),
-# it is renamed accordingly (whole number.jpg) and then added to the list
-# allfilenames. If it is not a goods receipt, it is renamed accordingly
-# (GRwholenumber.decimalnumber.jpg) and then added to the list
-# allfilenames.
-for file in filenames:
-    gr_cropocr(file)
-    if isgr == True: #or isgr2 == True:
-        os.rename(file, str(counter1) + '.jpg')
-        allfilenames.append(str(counter1) + '.jpg')
-        counter1 += 1
-        counter2 = 1
-    else:
-        os.rename(file, str((counter1 - 1)) + '.' + str(counter2) \
-        +  '.jpg')
-        allfilenames.append(str((counter1 - 1)) + '.' + str(counter2) \
-        + '.jpg')
-        counter2 += 1
-
-# The following loops iterate through the list allfilenames and removes
-# duplicate GRs.
-k = 1
-while k < len(allfilenames):
-    if len(allfilenames[k].split('.')) == 2 and \
-    len(allfilenames[k-1].split('.')) == 2:
-        os.remove(allfilenames[k-1])                    
-        del allfilenames[k-1]
-        k -= 1
-    k += 1
-
-# The following loop iterates through the files in allfilenames and
-# appends the good receipt files to grfilenames and the picking ticket
-# files to ptfilenames.
-for file in allfilenames:
-    if len(file.split('.')) == 2:
-        grfilenames.append(file)
-    elif len(file.split('.')) == 3:
-        ptfilenames.append(file)
-
-# The following creates a dictionary called dicta that holds the goods
-# receipts as keys and picking tickets as values.
-dicta = defaultdict(list)
-for grfile in grfilenames:
-    for ptfile in ptfilenames:
-        if grfile.split('.')[0] == ptfile.split('.')[0]:
-            dicta[grfile].append(ptfile)
+    # The following creates a dictionary called dicta that holds the goods
+    # receipts as keys and picking tickets as values.
+    dicta = defaultdict(list)
+    for grfile in grfilenames:
+        for ptfile in ptfilenames:
+            if grfile.split('.')[0] == ptfile.split('.')[0]:
+                dicta[grfile].append(ptfile)
 
 
-# The following renames the GR's into numerical order
-# after the duplicates have been removed.
-# counter = 1
-# for file in dicta:
-#     counter2 = 1
-#     if file == (str(counter) + '.jpg'):
-#         counter += 1
-#     else:
-#         os.rename(file, str(counter) + '.jpg')
-#         dicta[str(counter) + '.jpg'] = dicta.pop(file)
-#         # for i in dicta[str(counter) + '.jpg']:
-#         #     i = str(counter) + '.' + str(counter2) + '.jpg'
-#         #     counter2 += 1
-#         counter += 1
+    # The following renames the GR's into numerical order
+    # after the duplicates have been removed.
+    # counter = 1
+    # for file in dicta:
+    #     counter2 = 1
+    #     if file == (str(counter) + '.jpg'):
+    #         counter += 1
+    #     else:
+    #         os.rename(file, str(counter) + '.jpg')
+    #         dicta[str(counter) + '.jpg'] = dicta.pop(file)
+    #         # for i in dicta[str(counter) + '.jpg']:
+    #         #     i = str(counter) + '.' + str(counter2) + '.jpg'
+    #         #     counter2 += 1
+    #         counter += 1
 
 
-# The following iterates only through the GR files in dicta
-# and uses the 4 functions to pull the RR, PO, DT, and PS from each.
-# Then, it compares the values of rr & rr2, po & po2, dt & dt2, and
-# ps & ps2. Based on this comparison, final values are assigned to
-# the variables recrep, purord, date, and person, respectively.
-# All of these final values are then added to the txt file for each
-# file in dicta.
-for file in dicta:
-    full_ocr(file)
-    rrcrop_ocr(file)
-    pocrop_ocr(file)
-    dtcrop_ocr(file)
-    pscrop_ocr(file)
+    # The following iterates only through the GR files in dicta
+    # and uses the 4 functions to pull the RR, PO, DT, and PS from each.
+    # Then, it compares the values of rr & rr2, po & po2, dt & dt2, and
+    # ps & ps2. Based on this comparison, final values are assigned to
+    # the variables recrep, purord, date, and person, respectively.
+    # All of these final values are then added to the txt file for each
+    # file in dicta.
+    for file in dicta:
+        full_ocr(file)
+        rrcrop_ocr(file)
+        pocrop_ocr(file)
+        dtcrop_ocr(file)
+        pscrop_ocr(file)
 
 
-    # The following compares the receiving report found from
-    # a cropped OCR scan and the receiving report found from
-    # a full page OCR scan and sets the variable recrep equal
-    # to their match or a regex match of one of them.
-    if rr == rr2 and rr == 'No Receiving Report # Found':
-        recrep = ''
-    elif rr == rr2:
-        recrep = rr
-    elif rr != rr2 and re.match('[5][0]\d{8}', rr) is not None and \
-    re.match('[5][0]\d{8}', rr2) is not None:
-        recrep = 'Need to Check: Either ' + str(rr) + ' or ' + str(rr2)
-    elif rr != rr2 and re.match('[5][0]\d{8}', rr) is not None and \
-    re.match('[5][0]\d{8}', rr2) is None:
-        recrep = str(rr)# + ': Check'
-    elif rr != rr2 and re.match('[5][0]\d{8}', rr) is None and \
-    re.match('[5][0]\d{8}', rr2) is not None:
-        recrep = str(rr2)# + ': Check'
-    elif rr != rr2 and re.match('[5][0]\d{8}', rr) is not None:
-        recrep = str(rr)# + ': Check'
-    elif rr != rr2 and re.match('[5][0]\d{8}', rr2) is not None:
-        recrep = str(rr2)# + ': Check'
-    else:
-        recrep = 'Need to Check: Either ' + str(rr) + ' or ' + str(rr2)
+        # The following compares the receiving report found from
+        # a cropped OCR scan and the receiving report found from
+        # a full page OCR scan and sets the variable recrep equal
+        # to their match or a regex match of one of them.
+        if rr == rr2 and rr == 'No Receiving Report # Found':
+            recrep = ''
+        elif rr == rr2:
+            recrep = rr
+        elif rr != rr2 and re.match('[5][0]\d{8}', rr) is not None and \
+        re.match('[5][0]\d{8}', rr2) is not None:
+            recrep = 'Need to Check: Either ' + str(rr) + ' or ' + str(rr2)
+        elif rr != rr2 and re.match('[5][0]\d{8}', rr) is not None and \
+        re.match('[5][0]\d{8}', rr2) is None:
+            recrep = str(rr)# + ': Check'
+        elif rr != rr2 and re.match('[5][0]\d{8}', rr) is None and \
+        re.match('[5][0]\d{8}', rr2) is not None:
+            recrep = str(rr2)# + ': Check'
+        elif rr != rr2 and re.match('[5][0]\d{8}', rr) is not None:
+            recrep = str(rr)# + ': Check'
+        elif rr != rr2 and re.match('[5][0]\d{8}', rr2) is not None:
+            recrep = str(rr2)# + ': Check'
+        else:
+            recrep = 'Need to Check: Either ' + str(rr) + ' or ' + str(rr2)
 
-    # The following compares the purchase order found from
-    # a cropped OCR scan and the purchase order found from
-    # a full page OCR scan and sets the variable purord equal
-    # to their match or a regex match of one of them.
-    if po == po2 and po == 'No Purchase Order # Found':
-        purord = ''
-    elif po == po2:
-        purord = po
-    elif po != po2 and re.match('[4][5]\d{8}', po) is not None and \
-    re.match('[4][5]\d{8}', po2) is not None:
-        purord = 'Need to Check: Either ' + str(po) + ' or ' + str(po2)
-    elif po != po2 and re.match('[4][5]\d{8}', po) is not None and \
-    re.match('[4][5]\d{8}', po2) is None:
-        purord = str(po)# + ': Check'
-    elif po != po2 and re.match('[4][5]\d{8}', po) is None and \
-    re.match('[4][5]\d{8}', po2) is not None:
-        purord = str(po2)# + ': Check'
-    elif po != po2 and re.match('[4][5]\d{8}', po) is not None:
-        purord = str(po)# + ': Check'
-    elif po != po2 and re.match('[4][5]\d{8}', po2) is not None:
-        purord = str(po2)# + ': Check'
-    else:
-        purord = 'Need to Check: Either ' + str(po) + ' or ' + str(po2)
+        # The following compares the purchase order found from
+        # a cropped OCR scan and the purchase order found from
+        # a full page OCR scan and sets the variable purord equal
+        # to their match or a regex match of one of them.
+        if po == po2 and po == 'No Purchase Order # Found':
+            purord = ''
+        elif po == po2:
+            purord = po
+        elif po != po2 and re.match('[4][5]\d{8}', po) is not None and \
+        re.match('[4][5]\d{8}', po2) is not None:
+            purord = 'Need to Check: Either ' + str(po) + ' or ' + str(po2)
+        elif po != po2 and re.match('[4][5]\d{8}', po) is not None and \
+        re.match('[4][5]\d{8}', po2) is None:
+            purord = str(po)# + ': Check'
+        elif po != po2 and re.match('[4][5]\d{8}', po) is None and \
+        re.match('[4][5]\d{8}', po2) is not None:
+            purord = str(po2)# + ': Check'
+        elif po != po2 and re.match('[4][5]\d{8}', po) is not None:
+            purord = str(po)# + ': Check'
+        elif po != po2 and re.match('[4][5]\d{8}', po2) is not None:
+            purord = str(po2)# + ': Check'
+        else:
+            purord = 'Need to Check: Either ' + str(po) + ' or ' + str(po2)
 
-    # The following compares the date found from
-    # a cropped OCR scan and the date found from
-    # a full page OCR scan and sets the variable date equal
-    # to their match or a regex match of one of them.
-    if dt == dt2 and dt == 'No Date Found':
-        date = ''
-    elif dt == dt2:
-        date = dt
-    elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is not None and \
-    re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is not None:
-        date = 'Need to Check: Either ' + str(dt) + ' or ' + str(dt2)
-    elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is not None and \
-    re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is None:
-        date = str(dt)# + ': Check'
-    elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is None and \
-    re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is not None:
-        date = str(dt2)# + ': Check'
-    elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is not None:
-        date = str(dt)# + ': Check'
-    elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is not None:
-        date = str(dt2)# + ': Check'
-    else:
-        date = 'Need to Check: Either ' + str(dt) + ' or ' + str(dt2)
+        # The following compares the date found from
+        # a cropped OCR scan and the date found from
+        # a full page OCR scan and sets the variable date equal
+        # to their match or a regex match of one of them.
+        if dt == dt2 and dt == 'No Date Found':
+            date = ''
+        elif dt == dt2:
+            date = dt
+        elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is not None and \
+        re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is not None:
+            date = 'Need to Check: Either ' + str(dt) + ' or ' + str(dt2)
+        elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is not None and \
+        re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is None:
+            date = str(dt)# + ': Check'
+        elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is None and \
+        re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is not None:
+            date = str(dt2)# + ': Check'
+        elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt) is not None:
+            date = str(dt)# + ': Check'
+        elif dt != dt2 and re.match('[01]\d\/[0123]\d\/[12]\d{3}', dt2) is not None:
+            date = str(dt2)# + ': Check'
+        else:
+            date = 'Need to Check: Either ' + str(dt) + ' or ' + str(dt2)
 
-    # The following compares the name found from
-    # a cropped OCR scan and the name found from
-    # a full page OCR scan and sets the variable person equal
-    # to their match or a regex match of one of them.
-    if ps == ps2 and ps == 'No Person Found':
-        person = ''
-    elif ps == ps2:
-        person = ps
-    elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps) is not None and \
-    re.match('[5][0]\d{8}', ps2) is not None:
-        person = 'Need to Check: Either ' + str(ps) + ' or ' + str(ps2)
-    elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps) is not None and \
-    re.match('[a-zA-Z]*', ps2) is None:
-        person = str(ps)# + ': Check'
-    elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps2) is not None and \
-    re.match('[a-zA-Z]*', ps) is None:
-        person = str(ps2)# + ': Check'
-    elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps) is not None:
-        person = str(ps)# + ': Check'
-    elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps2) is not None:
-        person = str(ps2)# + ': Check'
-    else:
-        person = 'Need to Check: Either ' + str(ps) + ' or ' + str(ps2)
+        # The following compares the name found from
+        # a cropped OCR scan and the name found from
+        # a full page OCR scan and sets the variable person equal
+        # to their match or a regex match of one of them.
+        if ps == ps2 and ps == 'No Person Found':
+            person = ''
+        elif ps == ps2:
+            person = ps
+        elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps) is not None and \
+        re.match('[5][0]\d{8}', ps2) is not None:
+            person = 'Need to Check: Either ' + str(ps) + ' or ' + str(ps2)
+        elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps) is not None and \
+        re.match('[a-zA-Z]*', ps2) is None:
+            person = str(ps)# + ': Check'
+        elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps2) is not None and \
+        re.match('[a-zA-Z]*', ps) is None:
+            person = str(ps2)# + ': Check'
+        elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps) is not None:
+            person = str(ps)# + ': Check'
+        elif ps != ps2 and re.match('^[a-zA-Z0-9]*$', ps2) is not None:
+            person = str(ps2)# + ': Check'
+        else:
+            person = 'Need to Check: Either ' + str(ps) + ' or ' + str(ps2)
 
-    # The following is a command line call that converts several
-    # input image files into one multi-page .tif file.
-    multitif = 'C:\\"Program Files"\\IrfanView\\i_view64.exe /multitif=(C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\' + file.split('.')[0] + '.tif,'
+        # The following is a command line call that converts several
+        # input image files into one multi-page .tif file.
+        multitif = 'C:\\"Program Files"\\IrfanView\\i_view64.exe /multitif=(C:\\Users\\' + user + '\\Documents\\automation\\' + file.split('.')[0] + '.tif,'
 
-    # The following determines whether to use the multitif command
-    # line function or the convert command line function on the
-    # picking tickets. This is determined by the number of picking
-    # tickets with each goods receipt. If there is more than one,
-    # multitif is used. If there is only one, convert is used.
-    if len(dicta[file]) > 1:
+        # The following determines whether to use the multitif command
+        # line function or the convert command line function on the
+        # picking tickets. This is determined by the number of picking
+        # tickets with each goods receipt. If there is more than one,
+        # multitif is used. If there is only one, convert is used.
+        if len(dicta[file]) > 1:
+            for ptfile in dicta[file]:
+                multitif = multitif + 'C:\\Users\\' + user + '\\Documents\\automation\\' + ptfile + ','
+            multitif = multitif[:-1]
+            multitif = multitif + '/killmesoftly'
+            os.system(multitif)
+        else:
+            for ptfile in dicta[file]:
+                convert = 'C:\\"Program Files"\\IrfanView\\i_view64.exe C:\\Users\\' + user + '\\Documents\\automation\\' + ptfile + ' /convert=C:\\Users\\' + user + '\\Documents\\automation\\' + file.split('.')[0] + '.tif'
+            os.system(convert)
+
+        # The following deletes the old ptfiles from dicta.
         for ptfile in dicta[file]:
-            multitif = multitif + 'C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\' + ptfile + ','
-        multitif = multitif[:-1]
-        multitif = multitif + '/killmesoftly'
-        os.system(multitif)
-    else:
-        for ptfile in dicta[file]:
-            convert = 'C:\\"Program Files"\\IrfanView\\i_view64.exe C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\' + ptfile + ' /convert=C:\\Users\\culwellt\\Documents\\southwireOCR\\tester\\' + file.split('.')[0] + '.tif'
-        os.system(convert)
+            os.remove(ptfile)
 
-    # The following deletes the old ptfiles from dicta.
-    for ptfile in dicta[file]:
-        os.remove(ptfile)
+        # The following creates a variable that describes the new
+        # .tif file that has been created from the process above.
+        newfilename = file.split('.')[0] + '.tif'
 
-    # The following creates a variable that describes the new
-    # .tif file that has been created from the process above.
-    newfilename = file.split('.')[0] + '.tif'
+        # The following creates a variable that stores a single line
+        # of text that will be appended to the .txt file.
+        txtrow = recrep + ', ' + purord + ', ' + person + ', ' + date + \
+        '@' + newfilename + '\n'
+        
+        # The following opens the .txt file and appends the line
+        # of text that is stored in the variable "txtrow".
+        with open('results.txt', 'a') as txtfile:
+            txtfile.write(txtrow)
 
-    # The following creates a variable that stores a single line
-    # of text that will be appended to the .txt file.
-    txtrow = recrep + ', ' + purord + ', ' + person + ', ' + date + \
-    '@' + newfilename + '\n'
-    
-    # The following opens the .txt file and appends the line
-    # of text that is stored in the variable "txtrow".
-    with open('results.txt', 'a') as txtfile:
-        txtfile.write(txtrow)
+if __name__ == '__main__':
+    import sys
+    main(sys.argv)

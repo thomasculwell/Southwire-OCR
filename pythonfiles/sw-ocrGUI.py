@@ -1,86 +1,84 @@
 # sw-ocrGUI.py
 
+
 import sys
-from typing import *
-from PyQt5.QtWidgets import (
-    QMainWindow,
-    QApplication,
-    QWidget,
-    QLabel,
-    QPushButton,
-    QHBoxLayout,
-    QVBoxLayout,
-    QListView,
-    QAbstractItemView,
-    QMessageBox,
-    QLineEdit,
-    QTableView, QDialog, qApp, QGroupBox, QFormLayout, QDialogButtonBox)
-from PyQt5.QtGui import (
-    QStandardItemModel,
-    QStandardItem,
-    QPixmap)
-from pprint import pprint
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
 
-class MainWindow(QMainWindow):
+
+class MainWindow(QWidget):
     def __init__(self):
-        super().__init__()
-        self.setWindowTitle('Southwire-ApplicationXtender Automation GUI')
-        self.show_instructions_button = QPushButton('Instructions')
-        self.show_instructions_button.setEnabled(True)
-        # self.table_view.clicked.connect(self.enable_show_pet_item_button)
-        self.show_instructions_button.clicked.connect(self.show_instructions_button)
+        super(MainWindow, self).__init__()
+        self.window = QWidget()
+        self.layout = QVBoxLayout()
+        self.window.setWindowTitle('Southwire ApplicationXtender Automation')
+
+        self.instructions_button = QPushButton('Instructions')
+        self.instructions_button.clicked.connect(self.instructions_function)
+
+        self.convert_button = QPushButton('Convert')
+        self.convert_button.clicked.connect(self.convert_function)
         
-        
-        self.start = QPushButton('Start')
-        self.start.setEnabled(True)
-        # self.table_view.clicked.connect(self.enable_show_shelter_item_button)
-        self.start.clicked.connect(self.start)
-        
+        self.layout.addWidget(self.instructions_button)
+        self.layout.addWidget(self.convert_button)
+        self.window.setLayout(self.layout)
+        self.window.show()
 
-        vbox = QVBoxLayout()
-        # vbox.addWidget(self.table_view)
-        vbox.addWidget(self.show_instructions_button)
-        vbox.addWidget(self.show_start_button)
-        self.setLayout(vbox)
+    def instructions_function(self):
+        Instructions().exec()
 
-    def instructionsButton(self):
-        instructionsWindow().exec()
-
-    def start(self):
-        startWindow().exec()
+    def convert_function(self):
+        Convert().exec()
 
 
-
-    def show_pet_item(self):
-        current_pet_index = self.table_view.currentIndex().row()
-        selected_pet_item = self.table_model.row(current_pet_index)
-        PetDetailsDialog(selected_pet_item).exec()
-
-    def show_instructions_button(self):
-        instructionsWindow().exec()
-
-
-
-
-class instructionsWindow(QDialog):
+class Instructions(QWidget):
     def __init__(self):
-        super(InstructionsWindow, self).__init__()
-        self.setWindowTitle('Instructions')
+        super(Instructions, self).__init__()
 
-class startWindow(QDialog):
+        self.window = QWidget()
+        self.layout = QVBoxLayout()
+        self.window.setWindowTitle('Instructions')
+
+        self.blahbutton = QPushButton('blah')
+        self.layout.addWidget(self.blahbutton)
+        self.window.setLayout(self.layout)
+        self.window.show()
+
+
+class Convert(QWidget):
     def __init__(self):
-        super(startWindow, self).__init__()
-        self.setWindowTitle ('Start')
+        super(Convert, self).__init__()
+
+        self.window = QWidget()
+        self.layout = QVBoxLayout()
+        self.window.setWindowTitle('Convert')
+
+        self.blahbutton = QPushButton('blah')
+        self.layout.addWidget(self.blahbutton)
+        self.window.setLayout(self.layout)
+        self.window.show()
 
 
-
-
-if __name__=='__main__':
+if __name__ == '__main__':
     app = QApplication(sys.argv)
-    main = MainWindow()
-    main.show()
+    ex = MainWindow()
     sys.exit(app.exec_())
 
 
 
 
+# app = QApplication([])
+# window = QWidget()
+# layout = QVBoxLayout()
+
+# instructions_botton = QPushButton('Instructions')
+# convert_button = QPushButton('Convert')
+# instructions_botton.clicked.connect(instructions_function)
+
+# layout.addWidget(instructions_botton)
+# layout.addWidget(convert_button)
+# window.setLayout(layout)
+
+# window.show()
+
+
+# app.exec_()
