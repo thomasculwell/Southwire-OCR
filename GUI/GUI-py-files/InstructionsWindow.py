@@ -7,6 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox, QInputDialog
 
 instructions_label = """Instructions for Southwire ApplicationXtender Automation Program
 
@@ -95,22 +96,30 @@ class Ui_InstructionsWindow(object):
         self.gridLayout.setContentsMargins(10, 10, 10, 10)
         self.gridLayout.setSpacing(5)
         self.gridLayout.setObjectName("gridLayout")
+
         self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
+
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 631, 394))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+
         self.gridLayout_2 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout_2.setObjectName("gridLayout_2")
+
         self.label = QtWidgets.QLabel(self.scrollAreaWidgetContents)
         self.label.setObjectName("label")
         self.gridLayout_2.addWidget(self.label, 0, 0, 1, 1)
+
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setObjectName("pushButton")
-        self.gridLayout.addWidget(self.pushButton, 1, 0, 1, 1)
+        
+        self.ok_button = QtWidgets.QPushButton(self.centralwidget)
+        self.ok_button.setObjectName("ok_button")
+        # self.ok_button.clicked.connect(QtWidgets.qApp.quit)
+        # self.ok_button.clicked.connect(self.closeWindow)
+        self.gridLayout.addWidget(self.ok_button, 1, 0, 1, 1)
         Instructions.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(Instructions)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 653, 21))
@@ -127,7 +136,11 @@ class Ui_InstructionsWindow(object):
         _translate = QtCore.QCoreApplication.translate
         Instructions.setWindowTitle(_translate("Instructions", "Instructions"))
         self.label.setText(_translate("Instructions", instructions_label))
-        self.pushButton.setText(_translate("Instructions", "OK"))
+        self.ok_button.setText(_translate("Instructions", "OK"))
+
+    def closeWindow(self):
+        self.close()
+
 
 
 if __name__ == "__main__":

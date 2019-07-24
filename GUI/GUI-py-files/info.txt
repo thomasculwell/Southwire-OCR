@@ -1,3 +1,9 @@
+def getText(self):
+    text, okPressed = QInputDialog.getText(self, "Get text","Your name:", QLineEdit.Normal, "")
+    if okPressed and text != '':
+        print(text)
+
+
 right_before_execute_label = "Once you have entered the path for your files and clicked "OK", you can click "EXECUTE"."
 
 about_label = """Name: Southwire ApplicationXtender Automation GUI

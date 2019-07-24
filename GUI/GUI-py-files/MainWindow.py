@@ -7,12 +7,22 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from ExecuteWindow import *
+from PyQt5.QtWidgets import QInputDialog, QLineEdit
+from StartProgramWindow import *
 from InstructionsWindow import *
 from AboutWindow import *
 
 class Ui_MainWindow(object):
-    def startprogram(self):
+    def startProgramDialog(self):
+        self.dialog = QtWidgets.QInputDialog()
+        self.dialog.setWindowTitle("PATH")
+        # want to add a label that says "Enter PATH For Files Here:"
+        self.dialog.show()
+    # def getText(self):
+    #     text, okPressed = QInputDialog.getText(self, "Get text","Your name:", QLineEdit.Normal, "")
+    #     if okPressed and text != '':
+    #         print(text)
+    def startProgram(self):
         self.window = QtWidgets.QMainWindow()
         self.ui = Ui_StartProgramWindow()
         self.ui.setup(self.window)
@@ -36,15 +46,22 @@ class Ui_MainWindow(object):
         self.gridLayout.setContentsMargins(10, 10, 10, 10)
         self.gridLayout.setSpacing(5)
         self.gridLayout.setObjectName("gridLayout")
+
+        # "About" Button
         self.about_button = QtWidgets.QPushButton(self.centralwidget)
-        self.about_button.setObjectName("about_button")
+        # self.about_button.setObjectName("about_button")
+        self.about_button.setText('About')
         self.about_button.clicked.connect(self.about)
         self.gridLayout.addWidget(self.about_button, 3, 0, 1, 1)
+
+        # "Instructions" Button
         self.instructions_button = QtWidgets.QPushButton(self.centralwidget)
         self.instructions_button.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.instructions_button.setObjectName("instructions_button")
         self.instructions_button.clicked.connect(self.instructions)
         self.gridLayout.addWidget(self.instructions_button, 2, 0, 1, 1)
+
+        # Here is my Title label that says "Southwire ApplicationXtender Automation GUI"
         self.label = QtWidgets.QLabel(self.centralwidget)
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
@@ -54,11 +71,16 @@ class Ui_MainWindow(object):
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
+
+        # "Start Program" Button
         self.startprogram_button = QtWidgets.QPushButton(self.centralwidget)
         self.startprogram_button.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.startprogram_button.setObjectName("startprogram_button")
-        self.startprogram_button.clicked.connect(self.startprogram)
+        self.startprogram_button.clicked.connect(self.startProgram)
+        self.startprogram_button.clicked.connect(self.startProgramDialog)
         self.gridLayout.addWidget(self.startprogram_button, 1, 0, 1, 1)
+
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 336, 21))
@@ -74,7 +96,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Southwire ApplicationXtender Automation GUI"))
-        self.about_button.setText(_translate("MainWindow", "About"))
+        # self.about_button.setText(_translate("MainWindow", "About"))
         self.instructions_button.setText(_translate("MainWindow", "Instructions"))
         self.label.setText(_translate("MainWindow", "Southwire ApplicationXtender Automation GUI"))
         self.startprogram_button.setText(_translate("MainWindow", "Start Program"))
