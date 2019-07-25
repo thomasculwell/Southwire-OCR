@@ -11,10 +11,8 @@ from PIL import Image
 import pytesseract
 from collections import defaultdict
 import glob
-from mainWindow2 import pathvar
 
 
-print(pathvar)
 
 # The following function takes a jpg image as input, crops that image
 # down to a smaller section around the Receiving Report #, pulls the text
