@@ -7,19 +7,33 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QInputDialog, QLineEdit
 from StartProgramWindow import *
 from InstructionsWindow import *
 from AboutWindow import *
+# from swocr21 import *
+
+def runProgram(pathvar):
+    import swocr21
+
 
 class Ui_MainWindow(object):
     def startProgramDialog(self):
         self.dialog = QtWidgets.QInputDialog()
-        self.dialog.setWindowTitle("PATH")
-        # want to add a label that says "Enter PATH For Files Here:"
-        self.dialog.show()
+        # self.dialog.setWindowTitle("ENTER PATH")
+        # self.dialog.show()
+        text, ok = QtWidgets.QInputDialog.getText(self.dialog, 'Path Dialog', 'Enter Path:')
+        if ok and text != '':
+            pathvar = text
+            print(pathvar)
+
+        # self.dialog.show()
+    # def startPathDialog(self):
+    #     self.dialog = QtWidgets.QInputDialog()
+    #     self.ui = Ui_PATH()
+    #     self.ui.setup(self.dialog)
+    #     self.dialog.show()
     # def getText(self):
-    #     text, okPressed = QInputDialog.getText(self, "Get text","Your name:", QLineEdit.Normal, "")
+    #     text, okPressed = self.dialog.getText(self, "Get text","Your name:", QtWidgets.QLineEdit.Normal, "")
     #     if okPressed and text != '':
     #         print(text)
     def startProgram(self):

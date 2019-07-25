@@ -9,7 +9,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_PATH(object):
-    def setupUi(self, PATH):
+    def setup(self, PATH):
         PATH.setObjectName("PATH")
         PATH.resize(400, 300)
         self.gridLayout = QtWidgets.QGridLayout(PATH)
@@ -31,10 +31,19 @@ class Ui_PATH(object):
         self.buttonBox.rejected.connect(PATH.reject)
         QtCore.QMetaObject.connectSlotsByName(PATH)
 
+
     def retranslateUi(self, PATH):
         _translate = QtCore.QCoreApplication.translate
         PATH.setWindowTitle(_translate("PATH", "Dialog"))
-        self.label.setText(_translate("PATH", "Enter the Path for your files in the following text box and the press \"OK\"."))
+        self.label.setText(_translate("PATH", "Enter the Path for your files in the following text box and then press \"OK\"."))
+
+    def getText(self):
+        text, okPressed = QInputDialog.getText(self, "Get text","Your name:", QLineEdit.Normal, "")
+        if okPressed and text != '':
+            print(text)
+
+    def ok_pressed(self):
+    	self.getText()
 
 
 if __name__ == "__main__":
@@ -42,7 +51,7 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     PATH = QtWidgets.QDialog()
     ui = Ui_PATH()
-    ui.setupUi(PATH)
+    ui.setup(PATH)
     PATH.show()
     sys.exit(app.exec_())
 
