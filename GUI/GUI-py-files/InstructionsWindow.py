@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'InstructionsWindow.ui'
+# Form implementation generated from reading ui file 'instructionsWindow2.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.13.0
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMessageBox, QInputDialog
 
 instructions_label = """Instructions for Southwire ApplicationXtender Automation Program
 
@@ -86,69 +86,50 @@ PIL - “PIL is the Python Imaging Library by Fredrik Lundh and Contributors.”
 IrfanView - “IrfanView is a fast, compact and innovative FREEWARE (for non-commercial use) graphic viewer for Windows XP, Vista, 7, 8 and 10.” - IrfanView
 Directory - basically the same thing as a folder"""
 
-class Ui_InstructionsWindow(object):
-    def setup(self, Instructions):
-        Instructions.setObjectName("Instructions")
-        Instructions.resize(653, 485)
-        self.centralwidget = QtWidgets.QWidget(Instructions)
+class Ui_instructionsWindow(object):
+    def setup(self, instructionsWindow):
+        instructionsWindow.setObjectName("instructionsWindow")
+        instructionsWindow.resize(738, 453)
+        self.centralwidget = QtWidgets.QWidget(instructionsWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
-        self.gridLayout.setContentsMargins(10, 10, 10, 10)
-        self.gridLayout.setSpacing(5)
         self.gridLayout.setObjectName("gridLayout")
-
         self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
-
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 631, 394))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 718, 392))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-
         self.gridLayout_2 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout_2.setObjectName("gridLayout_2")
-
-        self.label = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-        self.label.setObjectName("label")
-        self.gridLayout_2.addWidget(self.label, 0, 0, 1, 1)
-
+        self.instructionsLabel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+        self.instructionsLabel.setObjectName("instructionsLabel")
+        self.gridLayout_2.addWidget(self.instructionsLabel, 0, 0, 1, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
-        
-        self.ok_button = QtWidgets.QPushButton(self.centralwidget)
-        self.ok_button.setObjectName("ok_button")
-        # self.ok_button.clicked.connect(QtWidgets.qApp.quit)
-        # self.ok_button.clicked.connect(self.closeWindow)
-        self.gridLayout.addWidget(self.ok_button, 1, 0, 1, 1)
-        Instructions.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(Instructions)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 653, 21))
+        instructionsWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(instructionsWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 738, 21))
         self.menubar.setObjectName("menubar")
-        Instructions.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(Instructions)
+        instructionsWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(instructionsWindow)
         self.statusbar.setObjectName("statusbar")
-        Instructions.setStatusBar(self.statusbar)
+        instructionsWindow.setStatusBar(self.statusbar)
 
-        self.retranslateUi(Instructions)
-        QtCore.QMetaObject.connectSlotsByName(Instructions)
+        self.retranslateUi(instructionsWindow)
+        QtCore.QMetaObject.connectSlotsByName(instructionsWindow)
 
-    def retranslateUi(self, Instructions):
+    def retranslateUi(self, instructionsWindow):
         _translate = QtCore.QCoreApplication.translate
-        Instructions.setWindowTitle(_translate("Instructions", "Instructions"))
-        self.label.setText(_translate("Instructions", instructions_label))
-        self.ok_button.setText(_translate("Instructions", "OK"))
-
-    def closeWindow(self):
-        self.close()
-
+        instructionsWindow.setWindowTitle(_translate("instructionsWindow", "MainWindow"))
+        self.instructionsLabel.setText(_translate("instructionsWindow", instructions_label))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    Instructions = QtWidgets.QMainWindow()
-    ui = Ui_Instructions()
-    ui.setup(Instructions)
-    Instructions.show()
+    instructionsWindow = QtWidgets.QMainWindow()
+    ui = Ui_instructionsWindow()
+    ui.setup(instructionsWindow)
+    instructionsWindow.show()
     sys.exit(app.exec_())
-
