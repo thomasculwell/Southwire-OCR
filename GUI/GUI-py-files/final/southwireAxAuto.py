@@ -1,4 +1,4 @@
-# mainWindow2.py
+# Southwire ApplicationXtender Automation GUI
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
