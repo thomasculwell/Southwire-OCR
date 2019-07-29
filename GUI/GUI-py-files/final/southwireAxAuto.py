@@ -1,7 +1,7 @@
 # mainWindow2.py
 
-from PyQt5 import QtCore, QtGui
-import PyQt5.QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
 import os
 import re
 import sys
@@ -97,14 +97,14 @@ Directory - basically the same thing as a folder"""
 class Ui_MainWindow(object):
 
     def areYouSure(self):
-        msgBox = QtWidgets.QMessageBox()
-        msgBox.setIcon(QtWidgets.QMessageBox.Question)
+        msgBox = QMessageBox()
+        msgBox.setIcon(QMessageBox.Question)
         msgBox.setText("Are you sure?")
         msgBox.setInformativeText('Clicking yes will execute code on designated path.')
-        msgBox.setStandardButtons(QtWidgets.QMessageBox.Yes| QtWidgets.QMessageBox.No| QtWidgets.QMessageBox.Cancel  )
-        msgBox.setDefaultButton(QtWidgets.QMessageBox.No)
+        msgBox.setStandardButtons(QMessageBox.Yes| QMessageBox.No| QMessageBox.Cancel  )
+        msgBox.setDefaultButton(QMessageBox.No)
         reply = msgBox.exec_()
-        if reply == QtWidgets.QMessageBox.Yes:
+        if reply == QMessageBox.Yes:
             def rrcrop_ocr(img):
                 original = PIL.Image.open(img)
 
@@ -770,7 +770,7 @@ class Ui_MainWindow(object):
                     txtfile.write(txtrow)
 
             # print('Finished')
-        elif reply == QtWidgets.QMessageBox.No:
+        elif reply == QMessageBox.No:
             return "no"
         else:
             return "cancel"
